@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Pagination Post"
+description: "Banxico's SPEI system, hacked last week, has been decreasing financial costs, reducing waste and changing attitudes since 2004"
 author: "Chester"
 ---
 

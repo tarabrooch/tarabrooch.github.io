@@ -1,16 +1,16 @@
 # Site settings
-title:          Tale
-description:    "Minimal Jekyll theme for storytellers"
-url:            "https://chesterhow.github.io"
+title:          En El Margen
+description:    "Blog de Economía y Política"
+url:            "https://www.enelmargen.org"
 
 # Google Analytics
 google_analytics: UA—XXXXXXXX-X
 
 # Author
 author:
-  name:         Chester How
-  url:          https://chester.how
-  email:        chesterhow@gmail.com
+  name:         Eduardo Flores
+  url:          https://www.enelmargen.org
+  email:        wp@enelmargen.org
 
 # Build settings
 markdown:       kramdown

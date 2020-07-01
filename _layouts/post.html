@@ -4,7 +4,7 @@ layout: default
 
 <div class="post">
   <div class="post-info">
-    <span>Written by</span>
+    <span>By</span>
     {% if page.author %}
         {{ page.author }}
     {% else %}
@@ -22,10 +22,6 @@ layout: default
 
   {{ content }}
 </div>
-
-{% if page.comments %}
-  {% include disqus_comments.html %}
-{% endif %}
 
 <div class="pagination">
   {% if page.next.url %}

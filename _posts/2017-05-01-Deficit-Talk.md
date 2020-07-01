@@ -2,6 +2,7 @@
 layout: post
 title: "The Dangers of Deficit-Talk"
 permalink: /economy/deficit-talk/
+author: "e"
 description: "Apart from other concerns, a really damaging consequence of Donald Trumps Presidency is the return of mercantilism"
 ---
 

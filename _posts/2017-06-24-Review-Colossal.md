@@ -1,7 +1,7 @@
 ---           
 layout: post
 title: "Colossal (Review)"
-permalink: /culture/colossal-review/
+permalink: /c/colossal-review/
 author: "e"
 description: "Original y divertida, Colossal habla sobre uno de los problemas modernos menos discutidos en el cine"
 ---

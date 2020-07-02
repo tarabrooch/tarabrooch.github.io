@@ -1,7 +1,7 @@
 ---           
 layout: post
 title: "No estamos preparados para AMLO"
-permalink: /p/amlo-experiment/
+permalink: /p/amlo-prepared/
 description: "Si México fuese un país con 400 años de cultura institucional sólida y un electorado extremadamente crítico, tal vez valdría la pena intentar una presidencia de AMLO. Desafortunadamente, no estamos preparados para un experimento de esta magnitud."
 author: "e"
 ---

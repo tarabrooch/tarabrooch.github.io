@@ -19,6 +19,6 @@ It's simple, fast-forward a few months and take a look at where we are. In the U
 
 There is another telling point: after a tiger rips Saff's arm, Joe describes his biggest worry: "I'm never going to financially recover from this."
 
-We hear you Mr. Exotic, genius of modern capitalism, who cares about +131 thousand deaths from COVID-19, as long as the stock market is "financially recovering" (wink, wink)?
+We hear you Mr. Exotic, genius of modern capitalism. Who cares about +131 thousand deaths from COVID-19, as long as the stock market is "financially recovering" (wink, wink)?
 
 Off course, there are thousands of factors that might be influencing the spread of COVID-19 -just like many influenced the demise of Joe- but I can't help to draw a parallel between the greed and laser-focus on results of a tiger breeder and the people we elect to lead. 

@@ -23,6 +23,8 @@ head(mxpopulation)
 ~~~~~~~
 
 
+<p></p>
+
 |    y|st             | id_st|mun            | id_mun| geoid|gender  |age   | population|
 |----:|:--------------|-----:|:--------------|------:|------:|:-------|:-----|----------:|
 | 2010|Aguascalientes |     1|Aguascalientes |      1|   1001|0 |0-14  |  124263.71|
@@ -32,6 +34,8 @@ head(mxpopulation)
 | 2010|Aguascalientes |     1|Aguascalientes |      1|   1001|0 |65+   |   17679.26|
 | 2010|Aguascalientes |     1|Aguascalientes |      1|   1001|1 |0-14  |  119535.77|
 
+
+<p></p>
 
 Here is the data for 2018, just out of curiosity:
 
@@ -43,6 +47,8 @@ mxpopulation %>%
   group_by(st) %>% 
   summarize("Population" = sum(population))
 ~~~~~~~
+
+<p></p>
 
 
 |st                  | Population|
@@ -80,5 +86,6 @@ mxpopulation %>%
 |Yucatan             |  2199617.6|
 |Zacatecas           |  1612014.2|
 
+<p></p>
 
 Hopefully this helps to avoid the notoriously bad *datos.gob* webpage! Happy data wrangling! 

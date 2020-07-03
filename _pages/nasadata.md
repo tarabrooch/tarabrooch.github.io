@@ -1,3 +1,10 @@
+---
+layout: post
+title: "nasadata"
+author: "e"
+permalink: /nasadata/
+---
+
 This package intends to provide a hassle-free way to access some of NASA's open-source API's to build applications or models. 
 
 Because the documentation seems inconsistent and there are *tons* of API's, I have concentrated my efforts on three which I believe provide the best "bang for my money".

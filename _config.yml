@@ -1,16 +1,16 @@
 # Site settings
-title:          en el margen
-description:    "Blog de Economía y Política"
-url:            "https://www.enelmargen.org"
+title:          Distribuidores Tara Brooch
+description:    "Sitio para Distribuidores Autorizados Tara Brooch"
+url:            
 
 # Google Analytics
 google_analytics: UA—XXXXXXXX-X
 
 # Author
 author:
-  name:         eem
-  url:          https://www.enelmargen.org
-  email:        wp@enelmargen.org
+  name:         tara
+  url:         
+  email:        
 
 # Build settings
 markdown:       kramdown

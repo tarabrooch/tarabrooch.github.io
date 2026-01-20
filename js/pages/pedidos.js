@@ -289,6 +289,13 @@ window.handleSaveOrder = async function() {
         return;
     }
 
+    // Check if we need to auto-deduct gold (status changed to "En Producción")
+    const statusChangedToProduccion = currentOrder.estado !== 'En Producción' && formData.estado === 'En Producción';
+    const shouldDeductGold = statusChangedToProduccion &&
+        formData.oro_gramos > 0 &&
+        formData.joyero &&
+        formData.oro_con_joyero === true;
+
     // Show loading state
     const saveBtn = document.getElementById('modal-save-btn');
     const originalText = saveBtn.textContent;
@@ -301,7 +308,26 @@ window.handleSaveOrder = async function() {
         const response = await API.updateOrder(orderId, formData, userName, changes);
 
         if (response.success) {
-            Utils.showToast('Pedido actualizado', 'success');
+            // Auto-deduct gold if conditions are met
+            if (shouldDeductGold) {
+                try {
+                    await API.createGoldMovement({
+                        joyero: formData.joyero,
+                        tipo_movimiento: 'Salida Pedido',
+                        gramos: formData.oro_gramos,
+                        order_id: orderId,
+                        numero_orden: formData.numero_orden || '',
+                        descripcion: `${formData.tipo_pedido || 'Pedido'} - ${formData.nombre_cliente || 'Sin nombre'}`
+                    });
+                    Utils.showToast(`Pedido actualizado. ${formData.oro_gramos}g descontados de ${formData.joyero}`, 'success');
+                } catch (goldError) {
+                    console.error('Error creating gold movement:', goldError);
+                    Utils.showToast('Pedido guardado, pero error al registrar movimiento de oro', 'warning');
+                }
+            } else {
+                Utils.showToast('Pedido actualizado', 'success');
+            }
+
             EditModal.close();
 
             // Update local data

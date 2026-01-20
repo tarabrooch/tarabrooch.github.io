@@ -171,5 +171,71 @@ const API = {
                 approved_by: Auth.getUserName()
             })
         });
+    },
+
+    // ==========================================================================
+    // Gold Movements API
+    // ==========================================================================
+
+    /**
+     * Get gold movements with optional filters
+     * @param {Object} filters - Filter parameters (joyero, tipo_movimiento)
+     * @returns {Promise<Array>} Array of gold movements
+     */
+    async getGoldMovements(filters = {}) {
+        // Use mock data if enabled
+        if (USE_MOCK_DATA) {
+            return MockData.getGoldMovements(filters);
+        }
+
+        const params = new URLSearchParams();
+
+        for (const [key, value] of Object.entries(filters)) {
+            if (value !== null && value !== undefined && value !== '') {
+                params.set(key, value);
+            }
+        }
+
+        const queryString = params.toString();
+        const endpoint = '/gold-movements' + (queryString ? '?' + queryString : '');
+
+        return this.request(endpoint, {
+            method: 'GET'
+        });
+    },
+
+    /**
+     * Create a new gold movement
+     * @param {Object} movementData - Movement data (joyero, tipo_movimiento, gramos, etc.)
+     * @returns {Promise<Object>} Created movement
+     */
+    async createGoldMovement(movementData) {
+        // Use mock data if enabled
+        if (USE_MOCK_DATA) {
+            return MockData.createGoldMovement(movementData);
+        }
+
+        return this.request('/gold-movements', {
+            method: 'POST',
+            body: JSON.stringify({
+                ...movementData,
+                created_by: Auth.getUserName()
+            })
+        });
+    },
+
+    /**
+     * Get balance summary per joyero
+     * @returns {Promise<Object>} Object with joyero names as keys and balance info as values
+     */
+    async getJoyeroBalances() {
+        // Use mock data if enabled
+        if (USE_MOCK_DATA) {
+            return MockData.getJoyeroBalances();
+        }
+
+        return this.request('/joyeros/balances', {
+            method: 'GET'
+        });
     }
 };

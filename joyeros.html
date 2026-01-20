@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Joyeros - Prisma</title>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/joyeros.css">
+</head>
+<body>
+    <div class="container-wide">
+        <a href="index.html" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Volver al panel
+        </a>
+
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>Joyeros</h1>
+                <p class="page-subtitle" id="page-subtitle">Balance de oro por joyero</p>
+            </div>
+            <div class="page-header-right">
+                <button class="btn btn-primary btn-sm" onclick="openMovementModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    Nuevo Movimiento
+                </button>
+            </div>
+        </div>
+
+        <!-- Joyero Balance Cards -->
+        <div class="joyero-cards" id="joyero-cards">
+            <!-- Cards rendered by JS -->
+        </div>
+
+        <!-- Clear filter button (hidden by default) -->
+        <div class="filter-info hidden" id="filter-info">
+            <span id="filter-text">Mostrando movimientos de: <strong id="filter-joyero-name"></strong></span>
+            <button class="btn btn-secondary btn-sm" onclick="clearJoyeroFilter()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                Limpiar filtro
+            </button>
+        </div>
+
+        <!-- Movements Table -->
+        <div class="movements-section">
+            <div class="movements-header">
+                <h2>Movimientos de Oro</h2>
+                <div class="movements-filter">
+                    <select class="filter-select" id="filter-tipo" onchange="filterMovements()">
+                        <option value="">Todos los tipos</option>
+                        <option value="Entrada">Entradas</option>
+                        <option value="Salida Pedido">Salidas Pedido</option>
+                        <option value="Salida Ajuste">Salidas Ajuste</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="movements-table-container">
+                <table class="movements-table" id="movements-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Joyero</th>
+                            <th>Tipo</th>
+                            <th class="text-right">Gramos</th>
+                            <th>Descripcion</th>
+                            <th>Pedido</th>
+                            <th>Registrado por</th>
+                        </tr>
+                    </thead>
+                    <tbody id="movements-tbody">
+                        <!-- Rows rendered by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="empty-state hidden" id="empty-state">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M6 12h12"/></svg>
+                <h3>Sin movimientos</h3>
+                <p>No hay movimientos de oro registrados.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            Prisma · Joyeros
+        </div>
+    </div>
+
+    <!-- New Movement Modal -->
+    <div class="modal-overlay" id="movement-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Nuevo Movimiento de Oro</h2>
+                <button class="modal-close" onclick="closeMovementModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Joyero *</label>
+                    <select class="form-select" id="mov-joyero" required>
+                        <option value="">Seleccionar joyero...</option>
+                        <!-- Options rendered by JS -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tipo de Movimiento *</label>
+                    <div class="toggle-group">
+                        <label class="toggle-option active" id="toggle-entrada">
+                            <input type="radio" name="mov_tipo" value="Entrada" checked onchange="updateMovementType()">
+                            Entrada
+                        </label>
+                        <label class="toggle-option" id="toggle-salida">
+                            <input type="radio" name="mov_tipo" value="Salida Ajuste" onchange="updateMovementType()">
+                            Salida Ajuste
+                        </label>
+                    </div>
+                    <p class="form-hint" id="tipo-hint">Oro que entra al inventario del joyero</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Gramos *</label>
+                    <input type="number" class="form-input" id="mov-gramos" step="0.1" min="0" placeholder="0.0" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Descripcion / Motivo *</label>
+                    <textarea class="form-textarea" id="mov-descripcion" placeholder="Ej: Compra de oro, Ajuste por merma, etc." required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeMovementModal()">Cancelar</button>
+                <button class="btn btn-primary" id="modal-submit-btn" onclick="submitMovement()">Registrar Movimiento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-card">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Cargando...</div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/mock-data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/pages/joyeros.js"></script>
+</body>
+</html>

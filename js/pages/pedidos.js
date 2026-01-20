@@ -277,8 +277,11 @@ window.handleSaveOrder = async function() {
         return;
     }
 
+    // Check for pending abono
+    const pendingAbono = EditModal.getPendingAbono();
+
     // Detect changes for logging
-    const changes = detectChanges(currentOrder, formData);
+    const changes = detectChanges(currentOrder, formData, pendingAbono);
 
     if (changes.length === 0) {
         Utils.showToast('No hay cambios para guardar', 'info');
@@ -325,9 +328,10 @@ window.handleSaveOrder = async function() {
  * Detect changes between original and new data
  * @param {Object} original - Original order data
  * @param {Object} updated - Updated form data
+ * @param {Object} pendingAbono - Optional abono data with monto and nota
  * @returns {Array} Array of change descriptions
  */
-function detectChanges(original, updated) {
+function detectChanges(original, updated, pendingAbono = null) {
     const changes = [];
     const fieldLabels = {
         numero_orden: 'Número de orden',
@@ -362,11 +366,17 @@ function detectChanges(original, updated) {
             if (key === 'estado') {
                 changes.push(`Estatus cambiado a ${newVal}`);
             } else if (key === 'anticipo') {
-                const diff = (newVal || 0) - (oldVal || 0);
-                if (diff > 0) {
-                    changes.push(`Anticipo aumentado en ${Utils.formatCurrency(diff)}`);
+                // Check if this is from an abono
+                if (pendingAbono && pendingAbono.monto > 0) {
+                    // Use abono-specific change entry
+                    changes.push(`Abono de ${Utils.formatCurrency(pendingAbono.monto)} registrado (Nota: #${pendingAbono.nota})`);
                 } else {
-                    changes.push(`${label} actualizado`);
+                    const diff = (newVal || 0) - (oldVal || 0);
+                    if (diff > 0) {
+                        changes.push(`Anticipo aumentado en ${Utils.formatCurrency(diff)}`);
+                    } else {
+                        changes.push(`${label} actualizado`);
+                    }
                 }
             } else {
                 changes.push(`${label} actualizado`);

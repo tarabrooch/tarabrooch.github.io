@@ -6,6 +6,7 @@
 
 const EditModal = {
     currentOrder: null,
+    pendingAbono: null, // Stores abono data to be added as a change entry
 
     /**
      * Open modal with order data
@@ -188,10 +189,27 @@ const EditModal = {
                     <div class="form-group">
                         <label class="form-label">Anticipo</label>
                         <input type="number" class="form-input" id="edit-anticipo" value="${order.anticipo || 0}" step="0.01" min="0" onchange="EditModal.updateSaldo()">
-                        <div class="quick-actions">
-                            <button type="button" class="quick-action-btn" onclick="EditModal.addToAnticipo(100)">+$100</button>
-                            <button type="button" class="quick-action-btn" onclick="EditModal.addToAnticipo(500)">+$500</button>
-                            <button type="button" class="quick-action-btn" onclick="EditModal.addToAnticipo(1000)">+$1000</button>
+                        <!-- Abono Button -->
+                        <button type="button" class="btn btn-secondary btn-sm" style="margin-top: 12px; width: 100%;" onclick="EditModal.openAbonoForm()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            Registrar Abono
+                        </button>
+                        <!-- Abono Form (collapsible) -->
+                        <div id="abono-form-container" class="abono-form-container" style="display: none;">
+                            <div class="abono-form">
+                                <div class="form-group" style="margin-bottom: 12px;">
+                                    <label class="form-label">Monto del Abono</label>
+                                    <input type="number" class="form-input" id="abono-monto" step="0.01" min="0" placeholder="0.00">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 12px;">
+                                    <label class="form-label">Número de Nota</label>
+                                    <input type="text" class="form-input" id="abono-nota" placeholder="Ej: 1234">
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button type="button" class="btn btn-secondary btn-sm" style="flex: 1;" onclick="EditModal.closeAbonoForm()">Cancelar</button>
+                                    <button type="button" class="btn btn-success btn-sm" style="flex: 1;" onclick="EditModal.confirmAbono()">Confirmar Abono</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -241,6 +259,25 @@ const EditModal = {
                     background: var(--primary-light);
                     border-radius: var(--radius);
                     text-align: center;
+                }
+                .abono-form-container {
+                    margin-top: 12px;
+                    padding: 16px;
+                    background: #f0fdf4;
+                    border: 1px solid #86efac;
+                    border-radius: var(--radius);
+                    animation: fadeIn 0.2s ease;
+                }
+                .abono-form .form-label {
+                    font-size: 13px;
+                    color: #166534;
+                }
+                .abono-form .form-input {
+                    border-color: #86efac;
+                }
+                .abono-form .form-input:focus {
+                    border-color: #22c55e;
+                    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
                 }
             `;
             document.head.appendChild(style);
@@ -306,6 +343,80 @@ const EditModal = {
         if (readyOption) {
             estadoSelect.value = readyOption.value;
         }
+    },
+
+    /**
+     * Open abono form
+     */
+    openAbonoForm() {
+        const container = document.getElementById('abono-form-container');
+        if (container) {
+            container.style.display = 'block';
+            // Clear previous values
+            document.getElementById('abono-monto').value = '';
+            document.getElementById('abono-nota').value = '';
+            // Focus on amount input
+            document.getElementById('abono-monto').focus();
+        }
+    },
+
+    /**
+     * Close abono form
+     */
+    closeAbonoForm() {
+        const container = document.getElementById('abono-form-container');
+        if (container) {
+            container.style.display = 'none';
+        }
+    },
+
+    /**
+     * Confirm abono and update anticipo
+     */
+    confirmAbono() {
+        const montoInput = document.getElementById('abono-monto');
+        const notaInput = document.getElementById('abono-nota');
+
+        const monto = parseFloat(montoInput.value) || 0;
+        const nota = notaInput.value.trim();
+
+        if (monto <= 0) {
+            Utils.showToast('Ingresa un monto válido', 'error');
+            montoInput.focus();
+            return;
+        }
+
+        if (!nota) {
+            Utils.showToast('Ingresa el número de nota', 'error');
+            notaInput.focus();
+            return;
+        }
+
+        // Update anticipo field
+        const anticipoInput = document.getElementById('edit-anticipo');
+        const currentAnticipo = parseFloat(anticipoInput.value) || 0;
+        anticipoInput.value = currentAnticipo + monto;
+        this.updateSaldo();
+
+        // Store abono data for change log
+        this.pendingAbono = {
+            monto: monto,
+            nota: nota
+        };
+
+        // Close form and show confirmation
+        this.closeAbonoForm();
+        Utils.showToast(`Abono de ${Utils.formatCurrency(monto)} registrado`, 'success');
+    },
+
+    /**
+     * Get pending abono data (if any)
+     * @returns {Object|null} Abono data or null
+     */
+    getPendingAbono() {
+        const abono = this.pendingAbono;
+        this.pendingAbono = null; // Clear after getting
+        return abono;
     },
 
     /**

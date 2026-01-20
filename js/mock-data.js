@@ -442,5 +442,269 @@ const MockData = {
                 });
             }, 300);
         });
+    },
+
+    // ==========================================================================
+    // Gold Movements
+    // ==========================================================================
+
+    // In-memory storage for mock gold movements
+    goldMovements: [
+        {
+            id: 'MOV-001',
+            joyero: 'Carlos',
+            tipo_movimiento: 'Entrada',
+            gramos: 100.0,
+            order_id: null,
+            numero_orden: null,
+            descripcion: 'Compra inicial de oro',
+            created_by: 'Alba',
+            created_at: '2026-01-02T10:00:00Z'
+        },
+        {
+            id: 'MOV-002',
+            joyero: 'Carlos',
+            tipo_movimiento: 'Salida Pedido',
+            gramos: 4.8,
+            order_id: 'mock-001',
+            numero_orden: 'ORD-001',
+            descripcion: 'Anillo de compromiso María García',
+            created_by: 'Alba',
+            created_at: '2026-01-10T11:30:00Z'
+        },
+        {
+            id: 'MOV-003',
+            joyero: 'Carlos',
+            tipo_movimiento: 'Salida Pedido',
+            gramos: 45.5,
+            order_id: 'mock-004',
+            numero_orden: 'ORD-004',
+            descripcion: 'Pulsera eslabón cubano Roberto Sánchez',
+            created_by: 'Alba',
+            created_at: '2026-01-08T14:00:00Z'
+        },
+        {
+            id: 'MOV-004',
+            joyero: 'Carlos',
+            tipo_movimiento: 'Salida Pedido',
+            gramos: 18.2,
+            order_id: 'mock-006',
+            numero_orden: 'ORD-006',
+            descripcion: 'Anillo caballero Fernando Torres',
+            created_by: 'Alba',
+            created_at: '2026-01-12T09:15:00Z'
+        },
+        {
+            id: 'MOV-005',
+            joyero: 'Carlos',
+            tipo_movimiento: 'Salida Pedido',
+            gramos: 3.4,
+            order_id: 'mock-009',
+            numero_orden: 'ORD-009',
+            descripcion: 'Aretes huggies Carolina Ruiz',
+            created_by: 'Margarita',
+            created_at: '2026-01-13T16:45:00Z'
+        },
+        {
+            id: 'MOV-006',
+            joyero: 'Victor',
+            tipo_movimiento: 'Entrada',
+            gramos: 50.0,
+            order_id: null,
+            numero_orden: null,
+            descripcion: 'Transferencia de inventario',
+            created_by: 'Alba',
+            created_at: '2026-01-05T08:30:00Z'
+        },
+        {
+            id: 'MOV-007',
+            joyero: 'Victor',
+            tipo_movimiento: 'Salida Pedido',
+            gramos: 2.1,
+            order_id: 'mock-005',
+            numero_orden: 'ORD-005',
+            descripcion: 'Dije inicial L Laura Martínez',
+            created_by: 'Alba',
+            created_at: '2026-01-05T10:00:00Z'
+        },
+        {
+            id: 'MOV-008',
+            joyero: 'Victor',
+            tipo_movimiento: 'Salida Pedido',
+            gramos: 15.8,
+            order_id: 'mock-010',
+            numero_orden: 'ORD-010',
+            descripcion: 'Cadena rope Alberto Mendoza',
+            created_by: 'Rossy',
+            created_at: '2026-01-02T15:20:00Z'
+        },
+        {
+            id: 'MOV-009',
+            joyero: 'Israel',
+            tipo_movimiento: 'Entrada',
+            gramos: 30.0,
+            order_id: null,
+            numero_orden: null,
+            descripcion: 'Asignación inicial',
+            created_by: 'Alba',
+            created_at: '2026-01-03T09:00:00Z'
+        },
+        {
+            id: 'MOV-010',
+            joyero: 'Israel',
+            tipo_movimiento: 'Salida Ajuste',
+            gramos: 5.0,
+            order_id: null,
+            numero_orden: null,
+            descripcion: 'Ajuste por merma de taller',
+            created_by: 'Alba',
+            created_at: '2026-01-15T11:00:00Z'
+        },
+        {
+            id: 'MOV-011',
+            joyero: 'Marcos',
+            tipo_movimiento: 'Entrada',
+            gramos: 20.0,
+            order_id: null,
+            numero_orden: null,
+            descripcion: 'Transferencia desde bodega',
+            created_by: 'Alba',
+            created_at: '2026-01-10T08:00:00Z'
+        },
+        {
+            id: 'MOV-012',
+            joyero: 'Salvador',
+            tipo_movimiento: 'Entrada',
+            gramos: 15.0,
+            order_id: null,
+            numero_orden: null,
+            descripcion: 'Asignación inicial',
+            created_by: 'Alba',
+            created_at: '2026-01-08T10:00:00Z'
+        },
+        {
+            id: 'MOV-013',
+            joyero: 'Juan',
+            tipo_movimiento: 'Entrada',
+            gramos: 10.0,
+            order_id: null,
+            numero_orden: null,
+            descripcion: 'Asignación inicial',
+            created_by: 'Alba',
+            created_at: '2026-01-12T14:00:00Z'
+        }
+    ],
+
+    /**
+     * Get gold movements (simulates API call)
+     * @param {Object} filters - Optional filters (joyero, tipo_movimiento)
+     * @returns {Object} Response with movements array
+     */
+    getGoldMovements(filters = {}) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                let result = [...this.goldMovements];
+
+                // Apply filters
+                if (filters.joyero) {
+                    result = result.filter(m => m.joyero === filters.joyero);
+                }
+                if (filters.tipo_movimiento) {
+                    result = result.filter(m => m.tipo_movimiento === filters.tipo_movimiento);
+                }
+
+                // Sort by date descending
+                result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+                resolve({
+                    success: true,
+                    data: result
+                });
+            }, 300);
+        });
+    },
+
+    /**
+     * Create a gold movement (simulates API call)
+     * @param {Object} movementData - Movement data
+     * @returns {Object} Response with created movement
+     */
+    createGoldMovement(movementData) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const count = this.goldMovements.length + 1;
+                const newMovement = {
+                    id: `MOV-${String(count).padStart(3, '0')}`,
+                    ...movementData,
+                    created_at: new Date().toISOString()
+                };
+
+                this.goldMovements.unshift(newMovement);
+
+                console.log(`\n📊 Nuevo movimiento de oro creado:`);
+                console.log(`   - Joyero: ${newMovement.joyero}`);
+                console.log(`   - Tipo: ${newMovement.tipo_movimiento}`);
+                console.log(`   - Gramos: ${newMovement.gramos}`);
+                console.log(`   - Descripción: ${newMovement.descripcion}`);
+
+                resolve({
+                    success: true,
+                    data: newMovement
+                });
+            }, 300);
+        });
+    },
+
+    /**
+     * Get balance summary per joyero (simulates API call)
+     * @returns {Object} Response with balances per joyero
+     */
+    getJoyeroBalances() {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const balances = {};
+
+                // Initialize all joyeros from config
+                CONFIG.JOYEROS.forEach(j => {
+                    balances[j.name] = {
+                        balance: 0,
+                        total_entrada: 0,
+                        total_salida: 0
+                    };
+                });
+
+                // Calculate from movements
+                this.goldMovements.forEach(m => {
+                    if (!balances[m.joyero]) {
+                        balances[m.joyero] = {
+                            balance: 0,
+                            total_entrada: 0,
+                            total_salida: 0
+                        };
+                    }
+
+                    if (m.tipo_movimiento === 'Entrada') {
+                        balances[m.joyero].total_entrada += m.gramos;
+                        balances[m.joyero].balance += m.gramos;
+                    } else {
+                        // Salida Pedido or Salida Ajuste
+                        balances[m.joyero].total_salida += m.gramos;
+                        balances[m.joyero].balance -= m.gramos;
+                    }
+                });
+
+                // Round to 1 decimal place
+                for (const joyero of Object.keys(balances)) {
+                    balances[joyero].balance = Math.round(balances[joyero].balance * 10) / 10;
+                    balances[joyero].total_entrada = Math.round(balances[joyero].total_entrada * 10) / 10;
+                    balances[joyero].total_salida = Math.round(balances[joyero].total_salida * 10) / 10;
+                }
+
+                resolve({
+                    success: true,
+                    data: balances
+                });
+            }, 200);
+        });
     }
 };

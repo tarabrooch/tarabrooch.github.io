@@ -1,0 +1,11 @@
+{
+  "httpMethod": "GET",
+  "path": "/orders",
+  "queryStringParameters": {
+    "activos": "true"
+  },
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": null
+}

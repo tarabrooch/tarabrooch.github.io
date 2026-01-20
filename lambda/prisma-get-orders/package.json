@@ -1,0 +1,9 @@
+{
+  "name": "prisma-get-orders",
+  "version": "1.0.0",
+  "description": "Lambda function to fetch orders from Notion",
+  "main": "index.js",
+  "dependencies": {
+    "@notionhq/client": "^2.2.14"
+  }
+}

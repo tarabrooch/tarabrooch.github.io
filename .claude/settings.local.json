@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(move \"C:\\\\Users\\\\eduar\\\\repos\\\\prisma-site-github-static\\\\oro-requerido.html\" \"C:\\\\Users\\\\eduar\\\\repos\\\\prisma-site-github-static\\\\archive\"\" 2>/dev/null || echo \"oro-requerido.html move completed or not found \")",
+      "Bash(zip:*)",
+      "Bash(powershell -Command \"Compress-Archive -Path ''index.js'', ''package.json'', ''node_modules'' -DestinationPath ''../gold-movements.zip'' -Force\")"
+    ]
+  }
+}

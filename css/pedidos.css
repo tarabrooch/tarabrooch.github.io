@@ -1,0 +1,839 @@
+/* ==========================================================================
+   Pedidos Page Styles
+   ========================================================================== */
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.order-count {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   Toolbar
+   ========================================================================== */
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+/* View Toggles */
+.view-toggles {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-tertiary);
+    padding: 4px;
+    border-radius: var(--radius);
+}
+
+.view-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.view-toggle:hover {
+    color: var(--text-primary);
+}
+
+.view-toggle.active {
+    background: var(--bg-primary);
+    color: var(--primary);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Filters */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    flex: 1;
+}
+
+.filter-group {
+    min-width: 150px;
+}
+
+.filter-select,
+.filter-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.2s;
+}
+
+.filter-select {
+    padding-right: 32px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m19 9-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.filter-select:focus,
+.filter-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.search-group {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-group .filter-input {
+    padding-left: 36px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+/* Calendar Options */
+.calendar-options {
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: var(--bg-primary);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.calendar-options-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   Views Container
+   ========================================================================== */
+
+.views-container {
+    min-height: 400px;
+}
+
+.view-panel {
+    display: none;
+}
+
+.view-panel.active {
+    display: block;
+}
+
+/* ==========================================================================
+   Lista View - Order Cards Grid
+   ========================================================================== */
+
+.orders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+/* Order Card */
+.order-card {
+    background: var(--bg-primary);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--border);
+}
+
+.order-card:hover {
+    box-shadow: var(--shadow);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.order-card-cliente {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.order-card-tipo {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.order-card-body {
+    margin-bottom: 12px;
+}
+
+.order-card-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.order-card-row:last-child {
+    border-bottom: none;
+}
+
+.order-card-label {
+    color: var(--text-muted);
+}
+
+.order-card-value {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.order-card-value.saldo {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.order-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.order-card-date {
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.order-card-date svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+
+.empty-state svg {
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+/* Order Status Badge */
+.order-status {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+/* Pendiente Aprobación = RED */
+.order-status.pendiente_aprobacion,
+.order-status.pendiente_aprobación {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* En Producción = ORANGE */
+.order-status.en_produccion,
+.order-status.en_producción {
+    background: #ffedd5;
+    color: #ea580c;
+}
+
+/* Listo para Entrega = GREEN */
+.order-status.listo_para_entrega,
+.order-status.listo_entrega {
+    background: #d1fae5;
+    color: #059669;
+}
+
+/* Entregado = BLUE */
+.order-status.entregado {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+/* Cancelado = GRAY */
+.order-status.cancelado {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+/* Date Urgency Styles */
+.date-urgent {
+    color: #ea580c !important;
+    font-weight: 600 !important;
+    background: #fff7ed;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.date-overdue {
+    color: #dc2626 !important;
+    font-weight: 700 !important;
+    background: #fef2f2;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+/* Gold/Gems Status Indicators */
+.status-ok {
+    color: #059669 !important;
+    font-weight: 600;
+}
+
+.status-pending {
+    color: #ea580c !important;
+    font-weight: 600;
+}
+
+.status-na {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Kanban View
+   ========================================================================== */
+
+.kanban-board {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+}
+
+.kanban-column {
+    flex: 0 0 280px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius);
+    padding: 12px;
+}
+
+.kanban-column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+}
+
+.kanban-column-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.kanban-column-count {
+    background: var(--bg-secondary);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.kanban-column-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Kanban Card (compact) */
+.kanban-card {
+    background: var(--bg-primary);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--border);
+}
+
+.kanban-card:hover {
+    box-shadow: var(--shadow-sm);
+    border-color: var(--primary);
+}
+
+.kanban-card-cliente {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.kanban-card-tipo {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.kanban-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.kanban-card-saldo {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.kanban-card-date {
+    color: var(--text-muted);
+}
+
+/* Collapsed column */
+.kanban-column.collapsed .kanban-column-cards {
+    display: none;
+}
+
+.kanban-column-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px;
+    transition: transform 0.2s;
+}
+
+.kanban-column.collapsed .kanban-column-toggle {
+    transform: rotate(-90deg);
+}
+
+/* ==========================================================================
+   Calendar View
+   ========================================================================== */
+
+.calendar-container {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.calendar-nav-btn {
+    background: var(--bg-tertiary);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.calendar-nav-btn:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.calendar-month {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.calendar-today-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.calendar-day-header {
+    background: var(--bg-tertiary);
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.calendar-day {
+    background: var(--bg-primary);
+    min-height: 100px;
+    padding: 8px;
+    position: relative;
+}
+
+.calendar-day.other-month {
+    background: var(--bg-secondary);
+}
+
+.calendar-day.other-month .calendar-day-number {
+    color: var(--text-muted);
+}
+
+.calendar-day.today {
+    background: var(--primary-light);
+}
+
+.calendar-day.today .calendar-day-number {
+    background: var(--primary);
+    color: white;
+}
+
+.calendar-day-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    border-radius: 50%;
+    margin-bottom: 4px;
+}
+
+.calendar-day-orders {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.calendar-order {
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.2s;
+}
+
+.calendar-order:hover {
+    transform: scale(1.02);
+}
+
+/* Pendiente Aprobación = RED */
+.calendar-order.pendiente_aprobacion {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* En Producción = ORANGE */
+.calendar-order.en_produccion {
+    background: #ffedd5;
+    color: #ea580c;
+}
+
+/* Listo para Entrega = GREEN */
+.calendar-order.listo_para_entrega,
+.calendar-order.listo_entrega {
+    background: #d1fae5;
+    color: #059669;
+}
+
+/* Entregado = BLUE */
+.calendar-order.entregado {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+/* Cancelado = GRAY */
+.calendar-order.cancelado {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.calendar-more {
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 2px 4px;
+    cursor: pointer;
+}
+
+.calendar-more:hover {
+    color: var(--primary);
+}
+
+/* ==========================================================================
+   Modal
+   ========================================================================== */
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.modal {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 600px;
+    margin: 40px 0;
+    box-shadow: var(--shadow-lg);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 24px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+}
+
+/* Modal form adjustments */
+.modal-body .form-group {
+    margin-bottom: 16px;
+}
+
+.modal-body .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* Quick Actions in Modal */
+.quick-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.quick-action-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.quick-action-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* ==========================================================================
+   Mobile Responsive
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .container-wide {
+        padding: 16px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .toolbar {
+        flex-direction: column;
+    }
+
+    .view-toggles {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .filters {
+        flex-direction: column;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .orders-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kanban-board {
+        flex-direction: column;
+    }
+
+    .kanban-column {
+        flex: none;
+        width: 100%;
+    }
+
+    .calendar-day {
+        min-height: 60px;
+        padding: 4px;
+    }
+
+    .calendar-day-number {
+        width: 20px;
+        height: 20px;
+        font-size: 11px;
+    }
+
+    .calendar-order {
+        font-size: 10px;
+        padding: 2px 4px;
+    }
+
+    .modal {
+        margin: 20px 0;
+    }
+
+    .modal-body .input-row {
+        grid-template-columns: 1fr;
+    }
+}

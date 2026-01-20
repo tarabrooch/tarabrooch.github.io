@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Pedidos - Prisma</title>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/pedidos.css">
+</head>
+<body>
+    <div class="container-wide">
+        <a href="index.html" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Volver al panel
+        </a>
+
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>Pedidos</h1>
+                <p class="order-count" id="order-count">Cargando...</p>
+            </div>
+            <div class="page-header-right">
+                <a href="nuevo-pedido.html" class="btn btn-primary btn-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    Nuevo
+                </a>
+            </div>
+        </div>
+
+        <!-- View Toggles and Filters -->
+        <div class="toolbar">
+            <div class="view-toggles">
+                <button class="view-toggle active" data-view="lista" onclick="switchView('lista')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+                    Lista
+                </button>
+                <button class="view-toggle" data-view="kanban" onclick="switchView('kanban')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="6" height="14" x="4" y="5" rx="2"/><rect width="6" height="10" x="14" y="7" rx="2"/></svg>
+                    Kanban
+                </button>
+                <button class="view-toggle" data-view="calendario" onclick="switchView('calendario')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                    Calendario
+                </button>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <select class="filter-select" id="filter-estado" onchange="applyFilters()">
+                        <option value="">Todos los estados</option>
+                        <!-- Options rendered by JS -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select class="filter-select" id="filter-joyero" onchange="applyFilters()">
+                        <option value="">Todos los joyeros</option>
+                        <!-- Options rendered by JS -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select class="filter-select" id="filter-vendedora" onchange="applyFilters()">
+                        <option value="">Todas las vendedoras</option>
+                        <!-- Options rendered by JS -->
+                    </select>
+                </div>
+                <div class="filter-group search-group">
+                    <input type="text" class="filter-input" id="filter-search" placeholder="Buscar cliente..." oninput="debounceSearch()">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar Date Toggle (only visible in calendar view) -->
+        <div class="calendar-options hidden" id="calendar-options">
+            <span class="calendar-options-label">Mostrar por:</span>
+            <div class="toggle-group" style="display: inline-flex; gap: 8px;">
+                <label class="toggle-option active" id="date-toggle-cliente" style="flex: none; padding: 8px 16px;">
+                    <input type="radio" name="calendar_date" value="cliente" checked onchange="changeCalendarDate('cliente')">
+                    Fecha Cliente
+                </label>
+                <label class="toggle-option" id="date-toggle-tienda" style="flex: none; padding: 8px 16px;">
+                    <input type="radio" name="calendar_date" value="tienda" onchange="changeCalendarDate('tienda')">
+                    Fecha Tienda
+                </label>
+                <label class="toggle-option" id="date-toggle-fabricacion" style="flex: none; padding: 8px 16px;">
+                    <input type="radio" name="calendar_date" value="fabricacion" onchange="changeCalendarDate('fabricacion')">
+                    Fecha Fabricación
+                </label>
+            </div>
+        </div>
+
+        <!-- Views Container -->
+        <div class="views-container">
+            <!-- Lista View -->
+            <div class="view-panel active" id="view-lista">
+                <div class="orders-grid" id="orders-grid">
+                    <!-- Order cards rendered by JS -->
+                </div>
+                <div class="empty-state hidden" id="empty-state-lista">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/></svg>
+                    <h3>No hay pedidos</h3>
+                    <p>No se encontraron pedidos con los filtros seleccionados.</p>
+                    <a href="nuevo-pedido.html" class="btn btn-primary btn-sm mt-2">Crear Pedido</a>
+                </div>
+            </div>
+
+            <!-- Kanban View -->
+            <div class="view-panel" id="view-kanban">
+                <div class="kanban-board" id="kanban-board">
+                    <!-- Kanban columns rendered by JS -->
+                </div>
+            </div>
+
+            <!-- Calendario View -->
+            <div class="view-panel" id="view-calendario">
+                <div class="calendar-container" id="calendar-container">
+                    <!-- Calendar rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Prisma · Pedidos
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Pedido</h2>
+                <button class="modal-close" onclick="closeEditModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Form rendered by JS -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeEditModal()">Cancelar</button>
+                <button class="btn btn-primary" id="modal-save-btn" onclick="saveOrder()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-card">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Cargando...</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/mock-data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/components/order-card.js"></script>
+    <script src="js/components/edit-modal.js"></script>
+    <script src="js/components/kanban.js"></script>
+    <script src="js/components/calendar.js"></script>
+    <script src="js/pages/pedidos.js"></script>
+</body>
+</html>

@@ -1,4 +1,260 @@
----
-layout: home
-title: Home
----
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Prisma - Joyería</title>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Prisma</h1>
+            <p>Sistema de Pedidos - Joyería</p>
+            <div class="status-badge" id="status-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                <span>Selecciona usuario</span>
+            </div>
+        </div>
+
+        <!-- Step 1: User Selection -->
+        <div id="step-user" class="flow-container sub-flow active fade-in">
+            <p class="flow-question">¿Quién eres?</p>
+            <div class="user-chips" id="user-chips">
+                <!-- Users will be rendered here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Step 2: Password (for users that require it) -->
+        <div id="step-password" class="flow-container sub-flow fade-in">
+            <button class="back-btn" onclick="goBack('user')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                Cambiar usuario
+            </button>
+            <p class="flow-question">Ingresa tu contraseña</p>
+            <div class="password-container">
+                <input type="password" id="password-input" class="password-input" placeholder="Contraseña" onkeypress="handlePasswordKeypress(event)">
+                <p id="password-error" class="error-message">Contraseña incorrecta</p>
+                <button class="password-btn" onclick="checkPassword()">Continuar</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Main Actions -->
+        <div id="step-actions" class="flow-container sub-flow fade-in">
+            <button class="back-btn" onclick="goBack('user')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                Cambiar usuario
+            </button>
+            <p class="flow-question">¿Qué necesitas hacer?</p>
+            <div class="action-grid">
+
+                <!-- Pedidos Section -->
+                <div class="section-header">Pedidos</div>
+
+                <a href="#" class="action-card" onclick="navigateTo('nuevo-pedido')">
+                    <div class="action-icon blue">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    </div>
+                    <div class="action-content">
+                        <div class="action-title">Nuevo Pedido</div>
+                        <div class="action-desc">Crear una nueva orden de cliente</div>
+                    </div>
+                    <div class="action-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </div>
+                </a>
+
+                <a href="#" class="action-card" onclick="navigateTo('pedidos')">
+                    <div class="action-icon green">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/></svg>
+                    </div>
+                    <div class="action-content">
+                        <div class="action-title">Ver Pedidos</div>
+                        <div class="action-desc">Lista, Kanban y Calendario de órdenes</div>
+                    </div>
+                    <div class="action-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </div>
+                </a>
+
+                <a href="#" class="action-card" onclick="navigateTo('oro-requerido')">
+                    <div class="action-icon" style="background: #fef3c7; color: #d97706;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M6 12h12"/></svg>
+                    </div>
+                    <div class="action-content">
+                        <div class="action-title">Oro Requerido</div>
+                        <div class="action-desc">Gramos de oro pendientes por fecha</div>
+                    </div>
+                    <div class="action-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        <div class="footer">
+            Prisma · Sistema de Pedidos
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+
+    <script>
+        // ==========================================================================
+        // State
+        // ==========================================================================
+        let selectedUserId = null;
+
+        // ==========================================================================
+        // Initialization
+        // ==========================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for existing session
+            if (Auth.init()) {
+                // User already logged in, show actions
+                updateStatusBadge();
+                showStep('actions');
+            } else {
+                // Render user selection
+                renderUserChips();
+            }
+        });
+
+        // ==========================================================================
+        // User Rendering
+        // ==========================================================================
+        function renderUserChips() {
+            const container = document.getElementById('user-chips');
+            container.innerHTML = '';
+
+            CONFIG.USERS.forEach(user => {
+                const chip = document.createElement('button');
+                chip.className = 'user-chip';
+                chip.onclick = () => selectUser(user.id);
+
+                let html = user.name;
+                if (user.isAdmin) {
+                    html += '<span class="admin-badge">Admin</span>';
+                }
+                chip.innerHTML = html;
+
+                container.appendChild(chip);
+            });
+        }
+
+        // ==========================================================================
+        // User Selection
+        // ==========================================================================
+        function selectUser(userId) {
+            selectedUserId = userId;
+            const user = Auth.selectUser(userId);
+
+            // Update UI - highlight selected chip
+            document.querySelectorAll('.user-chip').forEach(chip => {
+                const chipName = chip.textContent.replace('Admin', '').trim();
+                chip.classList.toggle('active', chipName === user.name);
+            });
+
+            // Check if password is required
+            if (Auth.requiresPassword(userId)) {
+                showStep('password');
+                document.getElementById('password-input').focus();
+            } else {
+                // Login directly
+                Auth.login(userId);
+                updateStatusBadge();
+                showStep('actions');
+            }
+        }
+
+        // ==========================================================================
+        // Password Handling
+        // ==========================================================================
+        function handlePasswordKeypress(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        }
+
+        function checkPassword() {
+            const input = document.getElementById('password-input');
+            const error = document.getElementById('password-error');
+
+            if (Auth.verifyPassword(selectedUserId, input.value)) {
+                error.classList.remove('visible');
+                input.classList.remove('error');
+                input.value = '';
+
+                // Login user
+                Auth.login(selectedUserId);
+                updateStatusBadge();
+                showStep('actions');
+            } else {
+                error.classList.add('visible');
+                input.classList.add('error', 'shake');
+                setTimeout(() => input.classList.remove('shake'), 300);
+                input.select();
+            }
+        }
+
+        // ==========================================================================
+        // Navigation
+        // ==========================================================================
+        function showStep(step) {
+            document.querySelectorAll('.sub-flow').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById('step-' + step).classList.add('active');
+        }
+
+        function goBack(toStep) {
+            if (toStep === 'user') {
+                // Clear password
+                document.getElementById('password-input').value = '';
+                document.getElementById('password-error').classList.remove('visible');
+                document.getElementById('password-input').classList.remove('error');
+
+                // Logout if going back to user selection
+                Auth.logout();
+                selectedUserId = null;
+                updateStatusBadge();
+
+                // Deselect all chips
+                document.querySelectorAll('.user-chip').forEach(chip => {
+                    chip.classList.remove('active');
+                });
+            }
+            showStep(toStep);
+        }
+
+        function navigateTo(page) {
+            event.preventDefault();
+            Auth.navigateTo(page);
+        }
+
+        // ==========================================================================
+        // UI Updates
+        // ==========================================================================
+        function updateStatusBadge() {
+            const badge = document.getElementById('status-badge');
+            const user = Auth.getUser();
+
+            let text = 'Selecciona usuario';
+            if (user) {
+                text = user.name;
+                if (user.isAdmin) {
+                    text += ' (Admin)';
+                }
+            }
+
+            badge.querySelector('span').textContent = text;
+        }
+    </script>
+</body>
+</html>

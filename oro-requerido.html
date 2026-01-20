@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Oro Requerido - Prisma</title>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/oro-requerido.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container-wide">
+        <a href="index.html" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Volver al panel
+        </a>
+
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>Oro Requerido</h1>
+                <p class="order-count" id="order-count">Cargando...</p>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards" id="summary-cards">
+            <div class="summary-card">
+                <div class="summary-icon gold">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M6 12h12"/></svg>
+                </div>
+                <div class="summary-content">
+                    <div class="summary-value" id="total-grams">0g</div>
+                    <div class="summary-label">Total Pendiente</div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon blue">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/></svg>
+                </div>
+                <div class="summary-content">
+                    <div class="summary-value" id="total-orders">0</div>
+                    <div class="summary-label">Pedidos</div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon orange">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div class="summary-content">
+                    <div class="summary-value" id="urgent-grams">0g</div>
+                    <div class="summary-label">Urgente (4 dias)</div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon red">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                </div>
+                <div class="summary-content">
+                    <div class="summary-value" id="overdue-grams">0g</div>
+                    <div class="summary-label">Vencido</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Toggles -->
+        <div class="toolbar">
+            <div class="view-toggles">
+                <button class="view-toggle active" data-view="grafica" onclick="switchView('grafica')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+                    Grafica
+                </button>
+                <button class="view-toggle" data-view="calendario" onclick="switchView('calendario')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                    Calendario
+                </button>
+            </div>
+        </div>
+
+        <!-- Views Container -->
+        <div class="views-container">
+            <!-- Chart View -->
+            <div class="view-panel active" id="view-grafica">
+                <div class="chart-container">
+                    <canvas id="gold-chart"></canvas>
+                </div>
+                <div class="empty-state hidden" id="empty-state-chart">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M6 12h12"/></svg>
+                    <h3>Sin requerimientos</h3>
+                    <p>No hay pedidos pendientes de oro.</p>
+                </div>
+            </div>
+
+            <!-- Calendar View -->
+            <div class="view-panel" id="view-calendario">
+                <div class="calendar-container" id="calendar-container">
+                    <!-- Calendar rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Detail Modal -->
+        <div class="modal-overlay" id="orders-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modal-title">Pedidos</h2>
+                    <button class="modal-close" onclick="closeOrdersModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- Orders list rendered by JS -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeOrdersModal()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Prisma · Oro Requerido
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-card">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Cargando...</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/mock-data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/components/gold-calendar.js"></script>
+    <script src="js/components/gold-chart.js"></script>
+    <script src="js/pages/oro-requerido.js"></script>
+</body>
+</html>

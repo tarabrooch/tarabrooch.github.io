@@ -1,7 +1,23 @@
-*.gem
-.bundle
+# Dependencies
+node_modules/
+
+# Lambda deployment packages
+lambda/**/node_modules/
+lambda/**/*.zip
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
 .DS_Store
-.sass-cache
-_site
-Gemfile.lock
-.jekyll-cache
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log

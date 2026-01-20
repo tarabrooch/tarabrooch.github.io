@@ -296,6 +296,16 @@ window.handleSaveOrder = async function() {
         formData.joyero &&
         formData.oro_con_joyero === true;
 
+    // Debug logging
+    console.log('=== Gold Deduction Debug ===');
+    console.log('currentOrder.estado:', currentOrder.estado);
+    console.log('formData.estado:', formData.estado);
+    console.log('statusChangedToProduccion:', statusChangedToProduccion);
+    console.log('formData.oro_gramos:', formData.oro_gramos);
+    console.log('formData.joyero:', formData.joyero);
+    console.log('formData.oro_con_joyero:', formData.oro_con_joyero);
+    console.log('shouldDeductGold:', shouldDeductGold);
+
     // Show loading state
     const saveBtn = document.getElementById('modal-save-btn');
     const originalText = saveBtn.textContent;

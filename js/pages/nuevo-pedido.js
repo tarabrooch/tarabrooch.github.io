@@ -29,6 +29,15 @@
     // ==========================================================================
 
     function initForm() {
+        // Populate vendedora dropdown
+        const vendedoraSelect = document.getElementById('vendedora');
+        CONFIG.VENDEDORAS.forEach(vendedora => {
+            const option = document.createElement('option');
+            option.value = vendedora.name;
+            option.textContent = vendedora.name;
+            vendedoraSelect.appendChild(option);
+        });
+
         // Populate tipo de pedido dropdown
         const tipoSelect = document.getElementById('tipo_pedido');
         CONFIG.TIPOS_PEDIDO.forEach(tipo => {
@@ -127,6 +136,7 @@
         // Required fields
         const requiredFields = [
             { id: 'numero_orden', label: 'Número de orden' },
+            { id: 'vendedora', label: 'Vendedora' },
             { id: 'nombre_cliente', label: 'Nombre del cliente' },
             { id: 'tipo_pedido', label: 'Tipo de pedido' },
             { id: 'descripcion', label: 'Descripción' },
@@ -176,6 +186,7 @@
         // Gather form data
         const formData = {
             numero_orden: document.getElementById('numero_orden').value.trim(),
+            vendedora: document.getElementById('vendedora').value,
             nombre_cliente: document.getElementById('nombre_cliente').value.trim(),
             telefono_cliente: document.getElementById('telefono_cliente').value.trim() || null,
             tipo_pedido: document.getElementById('tipo_pedido').value,
@@ -189,8 +200,7 @@
             joyero: document.getElementById('joyero').value || null,
             gemas_requeridas: document.getElementById('gemas_requeridas').value.trim() || null,
             gemas_origen: document.getElementById('gemas_origen').value || null,
-            notas: document.getElementById('notas').value.trim() || null,
-            vendedora: Auth.getUserName() || null
+            notas: document.getElementById('notas').value.trim() || null
         };
 
         // If fecha_entrega_tienda not set, calculate it

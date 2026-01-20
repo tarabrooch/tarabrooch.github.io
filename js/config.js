@@ -14,21 +14,31 @@ const CONFIG = {
     API_URL: 'https://your-api-gateway-url.execute-api.us-east-1.amazonaws.com',
 
     // ==========================================================================
-    // Users Configuration
+    // Dashboard Access
     // ==========================================================================
 
-    // List of users who can access the system
-    // isAdmin: true means they will see admin-only features (optional)
-    // password: if set, user must enter password to access (optional)
-    USERS: [
-        { id: 'alba', name: 'Alba', isAdmin: true, password: 'prisma2024' },
-        // Add more users here:
-        // { id: 'margarita', name: 'Margarita' },
+    // Password to access the dashboard (generic for all users)
+    DASHBOARD_PASSWORD: 'prisma2024',
+
+    // Session key for storing authentication state
+    SESSION_KEY: 'prisma_session',
+
+    // ==========================================================================
+    // Vendedoras (Salespeople)
+    // ==========================================================================
+
+    // List of vendedoras that can be assigned to orders
+    VENDEDORAS: [
+        { id: 'alba', name: 'Alba' },
+        { id: 'margarita', name: 'Margarita' },
+        // Add more vendedoras here:
         // { id: 'juan', name: 'Juan' },
     ],
 
-    // Session key for storing current user
-    SESSION_KEY: 'prisma_user_session',
+    // Keep USERS for backward compatibility (references VENDEDORAS)
+    get USERS() {
+        return this.VENDEDORAS;
+    },
 
     // ==========================================================================
     // Joyeros (Jewelry Makers)
@@ -97,6 +107,8 @@ const CONFIG = {
 };
 
 // Freeze config to prevent accidental modifications
-Object.freeze(CONFIG);
+Object.freeze(CONFIG.VENDEDORAS);
 Object.freeze(CONFIG.ESTADOS);
 Object.freeze(CONFIG.TIPOS_PEDIDO);
+Object.freeze(CONFIG.JOYEROS);
+Object.freeze(CONFIG.GEMAS_ORIGEN);

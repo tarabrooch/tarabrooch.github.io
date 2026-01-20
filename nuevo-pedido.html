@@ -23,14 +23,23 @@
         <div id="form-container">
             <form id="nuevo-pedido-form">
 
-                <!-- Order Number -->
+                <!-- Order Info -->
                 <div class="card fade-in">
-                    <h3 class="card-title">Número de Orden</h3>
+                    <h3 class="card-title">Información de la Orden</h3>
 
                     <div class="form-group">
                         <label class="form-label">Número de orden *</label>
                         <input type="text" class="form-input" id="numero_orden" placeholder="Ej: 1234" required>
                         <p class="form-hint">Número único de la orden (usado como identificador)</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Vendedora *</label>
+                        <select class="form-select" id="vendedora" required>
+                            <option value="" disabled selected>Selecciona vendedora</option>
+                            <!-- Options rendered by JS -->
+                        </select>
+                        <p class="form-hint">Persona que está tomando el pedido</p>
                     </div>
                 </div>
 

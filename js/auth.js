@@ -1,26 +1,21 @@
 /**
- * Prisma Authentication & User Management
+ * Prisma Authentication
  *
- * Handles user selection, session management, and password verification.
+ * Handles simple password-based session management for dashboard access.
+ * Vendedora selection is now handled at order creation time, not at login.
  */
 
 const Auth = {
-    // Current user state
-    currentUser: null,
-
     /**
-     * Initialize auth - check for existing session
+     * Check if user is authenticated
+     * @returns {boolean}
      */
-    init() {
-        const savedSession = sessionStorage.getItem(CONFIG.SESSION_KEY);
-        if (savedSession) {
+    isAuthenticated() {
+        const session = sessionStorage.getItem(CONFIG.SESSION_KEY);
+        if (session) {
             try {
-                const session = JSON.parse(savedSession);
-                const user = CONFIG.USERS.find(u => u.id === session.userId);
-                if (user && session.authenticated) {
-                    this.currentUser = user;
-                    return true;
-                }
+                const data = JSON.parse(session);
+                return data.authenticated === true;
             } catch (e) {
                 sessionStorage.removeItem(CONFIG.SESSION_KEY);
             }
@@ -29,176 +24,86 @@ const Auth = {
     },
 
     /**
-     * Get current user
-     * @returns {Object|null} Current user object or null
-     */
-    getUser() {
-        return this.currentUser;
-    },
-
-    /**
-     * Alias for getUser (for compatibility)
-     * @returns {Object|null} Current user object or null
-     */
-    getCurrentUser() {
-        // Try to restore from session if not set
-        if (!this.currentUser) {
-            this.init();
-            // Also check URL for user
-            if (!this.currentUser) {
-                this.getUserFromUrl();
-            }
-        }
-        return this.currentUser;
-    },
-
-    /**
-     * Check if user is authenticated
+     * Initialize auth - alias for isAuthenticated for backward compatibility
      * @returns {boolean}
      */
-    isAuthenticated() {
-        // Check current state
-        if (this.currentUser) {
-            return true;
-        }
-        // Try to restore from session
-        if (this.init()) {
-            return true;
-        }
-        // Check URL for user parameter
-        if (this.getUserFromUrl()) {
-            return true;
-        }
-        return false;
+    init() {
+        return this.isAuthenticated();
     },
 
     /**
-     * Get current user's name
-     * @returns {string} User name or 'Usuario'
-     */
-    getUserName() {
-        return this.currentUser ? this.currentUser.name : 'Usuario';
-    },
-
-    /**
-     * Check if current user is admin
-     * @returns {boolean}
-     */
-    isAdmin() {
-        return this.currentUser && this.currentUser.isAdmin === true;
-    },
-
-    /**
-     * Check if user requires password
-     * @param {string} userId - User ID to check
-     * @returns {boolean}
-     */
-    requiresPassword(userId) {
-        const user = CONFIG.USERS.find(u => u.id === userId);
-        return user && user.password;
-    },
-
-    /**
-     * Select a user (before password check if needed)
-     * @param {string} userId - User ID to select
-     * @returns {Object} User object
-     */
-    selectUser(userId) {
-        const user = CONFIG.USERS.find(u => u.id === userId);
-        if (!user) {
-            throw new Error('Usuario no encontrado');
-        }
-        return user;
-    },
-
-    /**
-     * Verify password for a user
-     * @param {string} userId - User ID
+     * Verify password
      * @param {string} password - Password to verify
      * @returns {boolean}
      */
-    verifyPassword(userId, password) {
-        const user = CONFIG.USERS.find(u => u.id === userId);
-        if (!user || !user.password) {
-            return true; // No password required
-        }
-        return user.password === password;
+    verifyPassword(password) {
+        return password === CONFIG.DASHBOARD_PASSWORD;
     },
 
     /**
-     * Login user (saves session)
-     * @param {string} userId - User ID to login
+     * Login (saves session)
      */
-    login(userId) {
-        const user = CONFIG.USERS.find(u => u.id === userId);
-        if (!user) {
-            throw new Error('Usuario no encontrado');
-        }
-
-        this.currentUser = user;
-
-        // Save session
+    login() {
         sessionStorage.setItem(CONFIG.SESSION_KEY, JSON.stringify({
-            userId: user.id,
             authenticated: true,
             timestamp: Date.now()
         }));
     },
 
     /**
-     * Logout current user
+     * Logout current session
      */
     logout() {
-        this.currentUser = null;
         sessionStorage.removeItem(CONFIG.SESSION_KEY);
     },
 
     /**
-     * Get URL with user parameter
-     * @param {string} page - Page name (without .html)
-     * @param {Object} extraParams - Additional URL parameters
-     * @returns {string} URL with parameters
+     * Get current user - returns null since we no longer track users at login
+     * Kept for backward compatibility
+     * @returns {null}
      */
-    buildUrl(page, extraParams = {}) {
-        const params = new URLSearchParams();
-
-        if (this.currentUser) {
-            params.set('user', this.currentUser.id);
-        }
-
-        for (const [key, value] of Object.entries(extraParams)) {
-            if (value !== null && value !== undefined) {
-                params.set(key, value);
-            }
-        }
-
-        const queryString = params.toString();
-        return page + '.html' + (queryString ? '?' + queryString : '');
+    getUser() {
+        return null;
     },
 
     /**
-     * Navigate to a page with current user context
-     * @param {string} page - Page name (without .html)
-     * @param {Object} extraParams - Additional URL parameters
+     * Alias for getUser
+     * @returns {null}
      */
-    navigateTo(page, extraParams = {}) {
-        window.location.href = this.buildUrl(page, extraParams);
+    getCurrentUser() {
+        return null;
     },
 
     /**
-     * Read user from URL parameters (for pages that receive user via URL)
-     * @returns {Object|null} User object or null
+     * Get user name - returns null since vendedora is selected per order
+     * @returns {null}
+     */
+    getUserName() {
+        return null;
+    },
+
+    /**
+     * Check if current user is admin
+     * With generic login, everyone who logs in has full access
+     * @returns {boolean}
+     */
+    isAdmin() {
+        return this.isAuthenticated();
+    },
+
+    /**
+     * Navigate to a page
+     * @param {string} page - Page name (without .html)
+     */
+    navigateTo(page) {
+        window.location.href = page + '.html';
+    },
+
+    /**
+     * Get user from URL - kept for backward compatibility
+     * @returns {null}
      */
     getUserFromUrl() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const userId = urlParams.get('user');
-        if (userId) {
-            const user = CONFIG.USERS.find(u => u.id === userId);
-            if (user) {
-                this.currentUser = user;
-                return user;
-            }
-        }
         return null;
     }
 };

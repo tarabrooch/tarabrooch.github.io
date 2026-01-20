@@ -41,7 +41,7 @@ const EditModal = {
 
         // Build joyero options
         const joyeroOptions = CONFIG.JOYEROS.map(j =>
-            `<option value="${j.id}" ${order.joyero === j.name || order.joyero === j.id ? 'selected' : ''}>${j.name}</option>`
+            `<option value="${j.name}" ${order.joyero === j.name ? 'selected' : ''}>${j.name}</option>`
         ).join('');
 
         // Build tipo pedido options

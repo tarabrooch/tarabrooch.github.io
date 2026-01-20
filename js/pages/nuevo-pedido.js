@@ -51,7 +51,7 @@
         const joyeroSelect = document.getElementById('joyero');
         CONFIG.JOYEROS.forEach(joyero => {
             const option = document.createElement('option');
-            option.value = joyero.id;
+            option.value = joyero.name;
             option.textContent = joyero.name;
             joyeroSelect.appendChild(option);
         });

@@ -31,8 +31,9 @@ const CONFIG = {
     VENDEDORAS: [
         { id: 'alba', name: 'Alba' },
         { id: 'margarita', name: 'Margarita' },
-        // Add more vendedoras here:
-        // { id: 'juan', name: 'Juan' },
+        { id: 'rossy', name: 'Rossy' },
+        { id: 'martha', name: 'Martha' },
+        { id: 'conchis', name: 'Conchis' },
     ],
 
     // Keep USERS for backward compatibility (references VENDEDORAS)
@@ -47,9 +48,11 @@ const CONFIG = {
     // List of jewelry makers that can be assigned to orders
     JOYEROS: [
         { id: 'carlos', name: 'Carlos' },
-        { id: 'miguel', name: 'Miguel' },
-        { id: 'especialista', name: 'Especialista Externo' }
-        // Add more joyeros here as needed
+        { id: 'victor', name: 'Victor' },
+        { id: 'israel', name: 'Israel' },
+        { id: 'marcos', name: 'Marcos' },
+        { id: 'salvador', name: 'Salvador' },
+        { id: 'juan', name: 'Juan' },
     ],
 
     // ==========================================================================

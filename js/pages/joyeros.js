@@ -258,6 +258,7 @@ function openMovementModal() {
     document.getElementById('mov-joyero').value = currentJoyeroFilter || '';
     document.getElementById('mov-gramos').value = '';
     document.getElementById('mov-descripcion').value = '';
+    document.getElementById('mov-password').value = '';
 
     // Reset tipo to Entrada
     document.querySelector('input[name="mov_tipo"][value="Entrada"]').checked = true;
@@ -304,6 +305,7 @@ async function submitMovement() {
     const tipo = document.querySelector('input[name="mov_tipo"]:checked').value;
     const gramos = parseFloat(document.getElementById('mov-gramos').value);
     const descripcion = document.getElementById('mov-descripcion').value.trim();
+    const password = document.getElementById('mov-password').value;
 
     // Validation
     if (!joyero) {
@@ -316,6 +318,12 @@ async function submitMovement() {
     }
     if (!descripcion) {
         Utils.showToast('Ingresa una descripcion', 'error');
+        return;
+    }
+    if (!password || password !== CONFIG.DASHBOARD_PASSWORD) {
+        Utils.showToast('Contraseña incorrecta', 'error');
+        document.getElementById('mov-password').value = '';
+        document.getElementById('mov-password').focus();
         return;
     }
 

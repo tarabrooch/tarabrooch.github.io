@@ -237,9 +237,12 @@ const EditModal = {
                     <p class="form-hint" style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Fecha límite para que el joyero tenga el oro</p>
                 </div>
 
-                <!-- Notion ID -->
+                <!-- Notion Link -->
                 <div style="text-align: center; font-size: 11px; color: #9ca3af; margin-top: 16px;">
-                    Notion ID: <span style="font-family: monospace;">${order.id}</span>
+                    <a href="https://www.notion.so/eduardoflores/${order.id.replace(/-/g, '')}" target="_blank" style="color: var(--primary); text-decoration: none;">
+                        Ver en Notion
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-left: 4px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </a>
                 </div>
             </div>
         `;

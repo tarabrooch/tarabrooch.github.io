@@ -18,7 +18,7 @@ const CONFIG = {
     // ==========================================================================
 
     // Password to access the dashboard (generic for all users)
-    DASHBOARD_PASSWORD: 'prisma2024',
+    DASHBOARD_PASSWORD: 'tarabrooch',
 
     // Session key for storing authentication state
     SESSION_KEY: 'prisma_session',
@@ -68,7 +68,6 @@ const CONFIG = {
         { id: 'pulsera', name: 'Pulsera' },
         { id: 'cadena', name: 'Cadena' },
         { id: 'dije', name: 'Dije' },
-        { id: 'reloj', name: 'Servicio de Reloj' },
         { id: 'reparacion', name: 'Reparación' },
         { id: 'otro', name: 'Otro' }
     ],

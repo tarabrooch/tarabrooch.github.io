@@ -4,6 +4,165 @@
  * Handles the new order form submission and validation.
  */
 
+// Store last created order for printing
+let lastCreatedOrder = null;
+
+/**
+ * Print order receipt (for Epson LX-350 dot matrix printer)
+ */
+window.printOrder = function() {
+    if (!lastCreatedOrder) {
+        alert('No hay pedido para imprimir');
+        return;
+    }
+
+    const order = lastCreatedOrder;
+    const saldo = order.importe_total - order.anticipo;
+    const fechaHoy = new Date().toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+
+    // Create print window with simple text format for dot matrix
+    const printWindow = window.open('', '_blank', 'width=400,height=600');
+
+    printWindow.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Comprobante - ${order.numero_orden}</title>
+    <style>
+        @page {
+            size: auto;
+            margin: 5mm;
+        }
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .divider {
+            border-top: 1px dashed #000;
+            margin: 8px 0;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin: 4px 0;
+        }
+        .label {
+            font-weight: normal;
+        }
+        .value {
+            font-weight: bold;
+            text-align: right;
+        }
+        .total-row {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .description {
+            margin: 8px 0;
+            word-wrap: break-word;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 10px;
+        }
+        @media print {
+            body { margin: 0; padding: 5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">TARA BROOCH</div>
+        <div>Comprobante de Pedido</div>
+        <div>${fechaHoy}</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+        <span class="label">Orden:</span>
+        <span class="value">${order.numero_orden}</span>
+    </div>
+    <div class="row">
+        <span class="label">Cliente:</span>
+        <span class="value">${order.nombre_cliente}</span>
+    </div>
+    ${order.telefono_cliente ? `
+    <div class="row">
+        <span class="label">Tel:</span>
+        <span class="value">${order.telefono_cliente}</span>
+    </div>
+    ` : ''}
+
+    <div class="divider"></div>
+
+    <div class="row">
+        <span class="label">Tipo:</span>
+        <span class="value">${order.tipo_pedido_name || order.tipo_pedido}</span>
+    </div>
+
+    <div class="description">
+        <strong>Descripcion:</strong><br>
+        ${order.descripcion}
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+        <span class="label">Importe Total:</span>
+        <span class="value">$${order.importe_total.toLocaleString('es-MX', {minimumFractionDigits: 2})}</span>
+    </div>
+    <div class="row">
+        <span class="label">Anticipo:</span>
+        <span class="value">$${order.anticipo.toLocaleString('es-MX', {minimumFractionDigits: 2})}</span>
+    </div>
+    <div class="row total-row">
+        <span class="label">SALDO:</span>
+        <span class="value">$${saldo.toLocaleString('es-MX', {minimumFractionDigits: 2})}</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+        <span class="label">Entrega:</span>
+        <span class="value">${new Date(order.fecha_entrega_cliente + 'T00:00:00').toLocaleDateString('es-MX', {day: '2-digit', month: 'short', year: 'numeric'})}</span>
+    </div>
+
+    <div class="footer">
+        <div class="divider"></div>
+        <div>Gracias por su preferencia</div>
+        <div>Conserve este comprobante</div>
+    </div>
+</body>
+</html>
+    `);
+
+    printWindow.document.close();
+
+    // Wait for content to load then print
+    setTimeout(() => {
+        printWindow.print();
+    }, 250);
+};
+
 (function() {
     'use strict';
 
@@ -64,12 +223,6 @@
             option.textContent = origen.name;
             gemasOrigenSelect.appendChild(option);
         });
-
-        // Set minimum date for delivery dates (today)
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('fecha_entrega_cliente').min = today;
-        document.getElementById('fecha_entrega_tienda').min = today;
-        document.getElementById('fecha_fabricacion').min = today;
 
         // Update saldo display initially
         updateSaldoDisplay();
@@ -233,6 +386,12 @@
     // ==========================================================================
 
     function showSuccess(formData, result) {
+        // Store order data for printing
+        lastCreatedOrder = {
+            ...formData,
+            tipo_pedido_name: Utils.getTipoPedidoName(formData.tipo_pedido)
+        };
+
         // Hide form
         document.getElementById('form-container').classList.add('hidden');
 

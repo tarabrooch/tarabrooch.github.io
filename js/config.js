@@ -63,6 +63,8 @@ const CONFIG = {
         { id: 'anillo_compromiso', name: 'Anillo de Compromiso' },
         { id: 'anillo', name: 'Anillo' },
         { id: 'argollas', name: 'Argollas de Matrimonio' },
+        { id: 'arras', name: 'Arras' },
+        { id: 'churumbela', name: 'Churumbela' },
         { id: 'aretes', name: 'Aretes' },
         { id: 'collar', name: 'Collar' },
         { id: 'pulsera', name: 'Pulsera' },

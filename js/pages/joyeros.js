@@ -320,7 +320,7 @@ async function submitMovement() {
         Utils.showToast('Ingresa una descripcion', 'error');
         return;
     }
-    if (!password || password !== CONFIG.DASHBOARD_PASSWORD) {
+    if (!password || password !== CONFIG.GOLD_MOVEMENTS_PASSWORD) {
         Utils.showToast('Contraseña incorrecta', 'error');
         document.getElementById('mov-password').value = '';
         document.getElementById('mov-password').focus();

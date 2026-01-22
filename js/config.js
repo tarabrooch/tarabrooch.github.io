@@ -20,6 +20,9 @@ const CONFIG = {
     // Password to access the dashboard (generic for all users)
     DASHBOARD_PASSWORD: 'tarabrooch',
 
+    // Password for gold movements (joyeros page)
+    GOLD_MOVEMENTS_PASSWORD: 'oroprisma',
+
     // Session key for storing authentication state
     SESSION_KEY: 'prisma_session',
 

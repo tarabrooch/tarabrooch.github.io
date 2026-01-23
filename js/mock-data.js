@@ -706,5 +706,346 @@ const MockData = {
                 });
             }, 200);
         });
+    },
+
+    // ==========================================================================
+    // Pagos (Spending)
+    // ==========================================================================
+
+    // In-memory storage for mock pagos
+    pagos: [
+        {
+            id: 'pago-001',
+            monto: 15000,
+            moneda: 'MXN',
+            es_fiscal: true,
+            categoria: 'operacion',
+            subcategoria: 'Renta',
+            fecha_vencimiento: '2026-01-25',
+            estado: 'confirmado',
+            descripcion: 'Renta mensual del local',
+            creado_por: 'Alba',
+            created_at: '2026-01-01T10:00:00Z'
+        },
+        {
+            id: 'pago-002',
+            monto: 2500,
+            moneda: 'MXN',
+            es_fiscal: true,
+            categoria: 'operacion',
+            subcategoria: 'Luz',
+            fecha_vencimiento: '2026-01-20',
+            estado: 'presupuestado',
+            descripcion: 'Recibo de luz CFE',
+            creado_por: 'Alba',
+            created_at: '2026-01-15T09:00:00Z'
+        },
+        {
+            id: 'pago-003',
+            monto: 5000,
+            moneda: 'USD',
+            es_fiscal: true,
+            categoria: 'mercancia',
+            subcategoria: 'Proveedor Oro',
+            fecha_vencimiento: '2026-01-28',
+            estado: 'presupuestado',
+            descripcion: 'Compra de oro 24k - Proveedor Miami',
+            creado_por: 'Margarita',
+            created_at: '2026-01-10T14:00:00Z'
+        },
+        {
+            id: 'pago-004',
+            monto: 8500,
+            moneda: 'MXN',
+            es_fiscal: false,
+            categoria: 'nomina',
+            subcategoria: 'Sueldos',
+            fecha_vencimiento: '2026-01-31',
+            estado: 'confirmado',
+            descripcion: 'Nómina quincenal empleados',
+            creado_por: 'Alba',
+            created_at: '2026-01-05T08:00:00Z'
+        },
+        {
+            id: 'pago-005',
+            monto: 3500,
+            moneda: 'MXN',
+            es_fiscal: true,
+            categoria: 'servicios',
+            subcategoria: 'Contador',
+            fecha_vencimiento: '2026-02-05',
+            estado: 'presupuestado',
+            descripcion: 'Honorarios mensuales contador',
+            creado_por: 'Alba',
+            created_at: '2026-01-12T11:00:00Z'
+        },
+        {
+            id: 'pago-006',
+            monto: 12000,
+            moneda: 'MXN',
+            es_fiscal: true,
+            categoria: 'impuestos',
+            subcategoria: 'IVA',
+            fecha_vencimiento: '2026-02-17',
+            estado: 'presupuestado',
+            descripcion: 'Pago mensual de IVA',
+            creado_por: 'Alba',
+            created_at: '2026-01-08T15:00:00Z'
+        },
+        {
+            id: 'pago-007',
+            monto: 850,
+            moneda: 'MXN',
+            es_fiscal: false,
+            categoria: 'otros',
+            subcategoria: 'Papelería',
+            fecha_vencimiento: '2026-01-22',
+            estado: 'pagado',
+            descripcion: 'Compra de papelería y suministros',
+            creado_por: 'Rossy',
+            created_at: '2026-01-18T10:30:00Z'
+        },
+        {
+            id: 'pago-008',
+            monto: 25000,
+            moneda: 'MXN',
+            es_fiscal: true,
+            categoria: 'mercancia',
+            subcategoria: 'Proveedor Gemas',
+            fecha_vencimiento: '2026-01-30',
+            estado: 'confirmado',
+            descripcion: 'Diamantes sueltos - Proveedor Antwerp',
+            creado_por: 'Alba',
+            created_at: '2026-01-14T09:00:00Z'
+        },
+        {
+            id: 'pago-009',
+            monto: 1200,
+            moneda: 'MXN',
+            es_fiscal: true,
+            categoria: 'operacion',
+            subcategoria: 'Internet',
+            fecha_vencimiento: '2026-01-19',
+            estado: 'pagado',
+            descripcion: 'Servicio de internet mensual',
+            creado_por: 'Alba',
+            created_at: '2026-01-15T08:00:00Z'
+        },
+        {
+            id: 'pago-010',
+            monto: 4500,
+            moneda: 'MXN',
+            es_fiscal: false,
+            categoria: 'equipo',
+            subcategoria: 'Herramientas de Taller',
+            fecha_vencimiento: '2026-02-10',
+            estado: 'presupuestado',
+            descripcion: 'Nuevas brocas y limas para joyeros',
+            creado_por: 'Margarita',
+            created_at: '2026-01-16T14:00:00Z'
+        },
+        {
+            id: 'pago-011',
+            monto: 500,
+            moneda: 'USD',
+            es_fiscal: false,
+            categoria: 'servicios',
+            subcategoria: 'Marketing',
+            fecha_vencimiento: '2026-02-01',
+            estado: 'presupuestado',
+            descripcion: 'Campaña de publicidad en Instagram',
+            creado_por: 'Alba',
+            created_at: '2026-01-17T11:00:00Z'
+        },
+        {
+            id: 'pago-012',
+            monto: 18000,
+            moneda: 'MXN',
+            es_fiscal: true,
+            categoria: 'mercancia',
+            subcategoria: 'Proveedor Cadenas',
+            fecha_vencimiento: '2026-01-26',
+            estado: 'confirmado',
+            descripcion: 'Cadenas de oro 14k variadas',
+            creado_por: 'Alba',
+            created_at: '2026-01-13T10:00:00Z'
+        },
+        {
+            id: 'pago-013',
+            monto: 2000,
+            moneda: 'MXN',
+            es_fiscal: false,
+            categoria: 'operacion',
+            subcategoria: 'Limpieza',
+            fecha_vencimiento: '2026-01-24',
+            estado: 'cancelado',
+            descripcion: 'Servicio de limpieza - CANCELADO por cambio proveedor',
+            creado_por: 'Alba',
+            created_at: '2026-01-10T08:00:00Z'
+        },
+        {
+            id: 'pago-014',
+            monto: 6800,
+            moneda: 'MXN',
+            es_fiscal: true,
+            categoria: 'nomina',
+            subcategoria: 'Comisiones',
+            fecha_vencimiento: '2026-02-03',
+            estado: 'presupuestado',
+            descripcion: 'Comisiones vendedoras enero',
+            creado_por: 'Alba',
+            created_at: '2026-01-19T09:00:00Z'
+        },
+        {
+            id: 'pago-015',
+            monto: 950,
+            moneda: 'MXN',
+            es_fiscal: false,
+            categoria: 'otros',
+            subcategoria: 'Empaque',
+            fecha_vencimiento: '2026-01-27',
+            estado: 'presupuestado',
+            descripcion: 'Cajas y bolsas para joyería',
+            creado_por: 'Rossy',
+            created_at: '2026-01-18T15:00:00Z'
+        }
+    ],
+
+    /**
+     * Get all pagos (simulates API call)
+     * @param {Object} filters - Optional filters (estado, categoria)
+     * @returns {Object} Response with pagos array
+     */
+    getPagos(filters = {}) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                let result = [...this.pagos];
+
+                // Apply filters
+                if (filters.estado) {
+                    result = result.filter(p => p.estado === filters.estado);
+                }
+                if (filters.categoria) {
+                    result = result.filter(p => p.categoria === filters.categoria);
+                }
+
+                // Sort by fecha_vencimiento ascending
+                result.sort((a, b) => {
+                    const dateA = a.fecha_vencimiento ? new Date(a.fecha_vencimiento) : new Date('9999-12-31');
+                    const dateB = b.fecha_vencimiento ? new Date(b.fecha_vencimiento) : new Date('9999-12-31');
+                    return dateA - dateB;
+                });
+
+                resolve({
+                    success: true,
+                    data: result
+                });
+            }, 300);
+        });
+    },
+
+    /**
+     * Get a single pago by ID
+     * @param {string} pagoId - Pago ID
+     * @returns {Object} Response with pago data
+     */
+    getPago(pagoId) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const pago = this.pagos.find(p => p.id === pagoId);
+
+                if (pago) {
+                    resolve({
+                        success: true,
+                        data: pago
+                    });
+                } else {
+                    reject({
+                        success: false,
+                        error: 'Pago no encontrado'
+                    });
+                }
+            }, 200);
+        });
+    },
+
+    /**
+     * Create a new pago (simulates API call)
+     * @param {Object} pagoData - Pago data
+     * @returns {Object} Response with created pago
+     */
+    createPago(pagoData) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const newPago = {
+                    id: 'pago-' + Date.now(),
+                    ...pagoData,
+                    created_at: new Date().toISOString()
+                };
+
+                this.pagos.unshift(newPago);
+
+                console.log(`\n💰 Nuevo pago creado:`);
+                console.log(`   - Monto: ${newPago.moneda === 'USD' ? 'USD ' : ''}$${newPago.monto}`);
+                console.log(`   - Categoría: ${newPago.categoria}`);
+                console.log(`   - Estado: ${newPago.estado}`);
+
+                resolve({
+                    success: true,
+                    data: newPago
+                });
+            }, 300);
+        });
+    },
+
+    /**
+     * Update a pago (simulates API call)
+     * @param {string} pagoId - Pago ID
+     * @param {Object} updates - Fields to update
+     * @param {string} userName - User making the update
+     * @param {Array} changes - List of changes
+     * @returns {Object} Response with updated pago
+     */
+    updatePago(pagoId, updates, userName, changes = []) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const index = this.pagos.findIndex(p => p.id === pagoId);
+
+                if (index === -1) {
+                    reject({
+                        success: false,
+                        error: 'Pago no encontrado'
+                    });
+                    return;
+                }
+
+                // Update the pago
+                this.pagos[index] = {
+                    ...this.pagos[index],
+                    ...updates
+                };
+
+                // Log changes to console
+                if (changes.length > 0) {
+                    const now = new Date();
+                    const timeStr = now.toLocaleTimeString('es-MX', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                    const dateStr = now.toISOString().split('T')[0];
+
+                    console.log(`\n📝 Cambios en pago ${pagoId}:`);
+                    changes.forEach(change => {
+                        console.log(`   - ${timeStr}, ${dateStr}: ${change} por ${userName}`);
+                    });
+                }
+
+                resolve({
+                    success: true,
+                    data: this.pagos[index]
+                });
+            }, 300);
+        });
     }
 };

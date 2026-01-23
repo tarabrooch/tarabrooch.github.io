@@ -7,6 +7,44 @@
 // Store last created order for printing
 let lastCreatedOrder = null;
 
+// Garantía state
+let isGarantia = false;
+
+/**
+ * Toggle garantía mode - sets total and anticipo to 0
+ */
+window.toggleGarantia = function() {
+    isGarantia = !isGarantia;
+
+    const btn = document.getElementById('btn-garantia');
+    const hint = document.getElementById('garantia-hint');
+    const importeInput = document.getElementById('importe_total');
+    const anticipoInput = document.getElementById('anticipo');
+
+    if (isGarantia) {
+        btn.classList.add('active');
+        hint.style.display = 'block';
+        importeInput.value = '0';
+        anticipoInput.value = '0';
+        importeInput.disabled = true;
+        anticipoInput.disabled = true;
+    } else {
+        btn.classList.remove('active');
+        hint.style.display = 'none';
+        importeInput.value = '';
+        anticipoInput.value = '';
+        importeInput.disabled = false;
+        anticipoInput.disabled = false;
+    }
+
+    // Update saldo display
+    const saldoDisplay = document.getElementById('saldo-display');
+    if (saldoDisplay) {
+        saldoDisplay.textContent = '$0.00';
+        saldoDisplay.classList.remove('negative');
+    }
+};
+
 /**
  * Print order receipt (for Epson LX-350 dot matrix printer)
  */
@@ -286,17 +324,23 @@ window.printOrder = function() {
     function validateForm() {
         const errors = [];
 
-        // Required fields
+        // Required fields (skip importe/anticipo for garantía orders)
         const requiredFields = [
             { id: 'numero_orden', label: 'Número de orden' },
             { id: 'vendedora', label: 'Vendedora' },
             { id: 'nombre_cliente', label: 'Nombre del cliente' },
             { id: 'tipo_pedido', label: 'Tipo de pedido' },
             { id: 'descripcion', label: 'Descripción' },
-            { id: 'importe_total', label: 'Importe total' },
-            { id: 'anticipo', label: 'Anticipo' },
             { id: 'fecha_entrega_cliente', label: 'Fecha de entrega al cliente' }
         ];
+
+        // Only require importe/anticipo if not garantía
+        if (!isGarantia) {
+            requiredFields.push(
+                { id: 'importe_total', label: 'Importe total' },
+                { id: 'anticipo', label: 'Anticipo' }
+            );
+        }
 
         requiredFields.forEach(field => {
             const input = document.getElementById(field.id);
@@ -310,13 +354,15 @@ window.printOrder = function() {
             }
         });
 
-        // Validate anticipo <= importe_total
-        const importeTotal = parseFloat(document.getElementById('importe_total').value) || 0;
-        const anticipo = parseFloat(document.getElementById('anticipo').value) || 0;
+        // Validate anticipo <= importe_total (skip for garantía)
+        if (!isGarantia) {
+            const importeTotal = parseFloat(document.getElementById('importe_total').value) || 0;
+            const anticipo = parseFloat(document.getElementById('anticipo').value) || 0;
 
-        if (anticipo > importeTotal) {
-            errors.push('El anticipo no puede ser mayor al importe total');
-            document.getElementById('anticipo').classList.add('error');
+            if (anticipo > importeTotal) {
+                errors.push('El anticipo no puede ser mayor al importe total');
+                document.getElementById('anticipo').classList.add('error');
+            }
         }
 
         return errors;
@@ -337,15 +383,22 @@ window.printOrder = function() {
         }
 
         // Gather form data
+        let descripcion = document.getElementById('descripcion').value.trim();
+
+        // Prepend [GARANTÍA] to description for garantía orders
+        if (isGarantia) {
+            descripcion = '[GARANTÍA] ' + descripcion;
+        }
+
         const formData = {
             numero_orden: document.getElementById('numero_orden').value.trim(),
             vendedora: document.getElementById('vendedora').value,
             nombre_cliente: document.getElementById('nombre_cliente').value.trim(),
             telefono_cliente: document.getElementById('telefono_cliente').value.trim() || null,
             tipo_pedido: document.getElementById('tipo_pedido').value,
-            descripcion: document.getElementById('descripcion').value.trim(),
-            importe_total: parseFloat(document.getElementById('importe_total').value),
-            anticipo: parseFloat(document.getElementById('anticipo').value),
+            descripcion: descripcion,
+            importe_total: isGarantia ? 0 : parseFloat(document.getElementById('importe_total').value),
+            anticipo: isGarantia ? 0 : parseFloat(document.getElementById('anticipo').value),
             fecha_entrega_cliente: document.getElementById('fecha_entrega_cliente').value,
             fecha_entrega_tienda: document.getElementById('fecha_entrega_tienda').value || null,
             fecha_fabricacion: document.getElementById('fecha_fabricacion').value || null,

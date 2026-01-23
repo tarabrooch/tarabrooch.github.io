@@ -82,11 +82,18 @@
                     <h3 class="card-title">Importe</h3>
 
                     <div class="form-group">
+                        <button type="button" class="btn btn-garantia" id="btn-garantia" onclick="toggleGarantia()">
+                            Garantía
+                        </button>
+                        <p class="form-hint" id="garantia-hint" style="display: none; color: var(--success);">Orden de garantía - sin cargo al cliente</p>
+                    </div>
+
+                    <div class="form-group" id="importe-group">
                         <label class="form-label">Importe total (MXN) *</label>
                         <input type="number" class="form-input" id="importe_total" placeholder="0.00" step="0.01" min="0" required>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" id="anticipo-group">
                         <label class="form-label">Anticipo (MXN) *</label>
                         <input type="number" class="form-input" id="anticipo" placeholder="0.00" step="0.01" min="0" required>
                         <p class="form-hint">El anticipo no puede ser mayor al importe total</p>
@@ -263,6 +270,28 @@
             color: var(--text-primary);
             font-weight: 500;
             font-size: 14px;
+        }
+
+        .btn-garantia {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-garantia:hover {
+            background: var(--bg-secondary);
+        }
+
+        .btn-garantia.active {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
         }
     </style>
 </body>

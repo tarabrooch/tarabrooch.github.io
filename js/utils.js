@@ -10,6 +10,22 @@ const Utils = {
     // ==========================================================================
 
     /**
+     * Parse date string as local time to avoid timezone issues
+     * @param {string|Date} date - Date to parse
+     * @returns {Date} Parsed date in local time
+     */
+    parseLocalDate(date) {
+        if (date instanceof Date) return date;
+        if (!date) return new Date(NaN);
+
+        // If it's a date-only string (YYYY-MM-DD), parse as local midnight
+        if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+            return new Date(date + 'T00:00:00');
+        }
+        return new Date(date);
+    },
+
+    /**
      * Format date for display (e.g., "15 Ene 2026")
      * @param {string|Date} date - Date to format
      * @returns {string} Formatted date
@@ -17,7 +33,7 @@ const Utils = {
     formatDate(date) {
         if (!date) return '-';
 
-        const d = new Date(date);
+        const d = this.parseLocalDate(date);
         if (isNaN(d.getTime())) return '-';
 
         const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
@@ -29,15 +45,19 @@ const Utils = {
     /**
      * Format date for input fields (YYYY-MM-DD)
      * @param {string|Date} date - Date to format
-     * @returns {string} ISO date string
+     * @returns {string} ISO date string in local time
      */
     formatDateForInput(date) {
         if (!date) return '';
 
-        const d = new Date(date);
+        const d = this.parseLocalDate(date);
         if (isNaN(d.getTime())) return '';
 
-        return d.toISOString().split('T')[0];
+        // Use local date components to avoid timezone shifts
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     },
 
     /**
@@ -65,7 +85,7 @@ const Utils = {
      * @returns {Date} Calculated date
      */
     subtractDays(date, days) {
-        const d = new Date(date);
+        const d = this.parseLocalDate(date);
         d.setDate(d.getDate() - days);
         return d;
     },
@@ -77,7 +97,7 @@ const Utils = {
      * @returns {Date} Calculated date
      */
     addDays(date, days) {
-        const d = new Date(date);
+        const d = this.parseLocalDate(date);
         d.setDate(d.getDate() + days);
         return d;
     },

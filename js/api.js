@@ -174,6 +174,46 @@ const API = {
     },
 
     // ==========================================================================
+    // Order Search API
+    // ==========================================================================
+
+    /**
+     * Search orders by customer name or order number
+     * Includes orders with estado_final = "cerrado_completo"
+     * @param {string} query - Search query (customer name or order number)
+     * @returns {Promise<Object>} Search results with order data
+     */
+    async searchOrders(query) {
+        // Use mock data if enabled
+        if (USE_MOCK_DATA) {
+            return MockData.searchOrders(query);
+        }
+
+        const params = new URLSearchParams();
+        params.set('q', query);
+
+        return this.request('/orders/search?' + params.toString(), {
+            method: 'GET'
+        });
+    },
+
+    /**
+     * Get Notion page content (blocks/children) for an order
+     * @param {string} orderId - Notion page ID
+     * @returns {Promise<Object>} Page content with blocks array
+     */
+    async getOrderPageContent(orderId) {
+        // Use mock data if enabled
+        if (USE_MOCK_DATA) {
+            return MockData.getOrderPageContent(orderId);
+        }
+
+        return this.request(`/orders/${orderId}/content`, {
+            method: 'GET'
+        });
+    },
+
+    // ==========================================================================
     // Gold Movements API
     // ==========================================================================
 

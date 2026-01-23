@@ -314,6 +314,73 @@ const MockData = {
             gemas_origen: 'tienda',
             gemas_listas: false,
             notas: 'CANCELADO - Cliente cambió de opinión. Anticipo devuelto.'
+        },
+        // Closed/Completed orders (estado_final = cerrado_completo) - for search testing
+        {
+            id: 'mock-closed-001',
+            numero_orden: 'ORD-2025-150',
+            nombre_cliente: 'María González Pérez',
+            telefono_cliente: '8181111222',
+            tipo_pedido: 'anillo_compromiso',
+            descripcion: 'Anillo de compromiso oro blanco 14k con diamante 0.3ct',
+            importe_total: 18500,
+            anticipo: 18500,
+            estado: 'Entregado',
+            estado_final: 'cerrado_completo',
+            fecha_pedido: '2025-11-15',
+            fecha_entrega_cliente: '2025-12-01',
+            fecha_entrega_tienda: '2025-11-28',
+            oro_gramos: 3.5,
+            oro_con_joyero: true,
+            joyero: 'Carlos',
+            gemas_requeridas: '1 diamante 0.3ct',
+            gemas_origen: 'tienda',
+            gemas_listas: true,
+            notas: 'Entregado exitosamente. Cliente muy satisfecho.'
+        },
+        {
+            id: 'mock-closed-002',
+            numero_orden: 'ORD-2025-145',
+            nombre_cliente: 'Roberto García Luna',
+            telefono_cliente: '8182223344',
+            tipo_pedido: 'argollas',
+            descripcion: 'Argollas de matrimonio oro amarillo 18k comfort fit',
+            importe_total: 24000,
+            anticipo: 24000,
+            estado: 'Entregado',
+            estado_final: 'cerrado_completo',
+            fecha_pedido: '2025-10-20',
+            fecha_entrega_cliente: '2025-11-15',
+            fecha_entrega_tienda: '2025-11-10',
+            oro_gramos: 12.8,
+            oro_con_joyero: true,
+            joyero: 'Victor',
+            gemas_requeridas: null,
+            gemas_origen: null,
+            gemas_listas: false,
+            notas: 'Grabado interior: R&L 15.11.2025'
+        },
+        {
+            id: 'mock-closed-003',
+            numero_orden: 'ORD-2025-130',
+            nombre_cliente: 'Ana María Rodríguez',
+            telefono_cliente: '8183334455',
+            tipo_pedido: 'collar',
+            descripcion: 'Collar con dije de corazón oro rosa 14k con zirconias',
+            importe_total: 5600,
+            anticipo: 5600,
+            estado: 'Entregado',
+            estado_final: 'cerrado_completo',
+            fecha_pedido: '2025-09-10',
+            fecha_entrega_cliente: '2025-09-25',
+            fecha_entrega_tienda: '2025-09-22',
+            oro_gramos: 4.2,
+            oro_con_joyero: true,
+            joyero: 'Carlos',
+            gemas_requeridas: '15 zirconias 1mm',
+            gemas_origen: 'tienda',
+            gemas_listas: true,
+            notas: 'Regalo de cumpleaños para hija.'
         }
     ],
 
@@ -705,6 +772,108 @@ const MockData = {
                     data: balances
                 });
             }, 200);
+        });
+    },
+
+    // ==========================================================================
+    // Order Search
+    // ==========================================================================
+
+    /**
+     * Search orders by customer name or order number (simulates API call)
+     * Includes orders with estado_final = "cerrado_completo"
+     * @param {string} query - Search query
+     * @returns {Object} Response with matching orders
+     */
+    searchOrders(query) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const searchQuery = query.toLowerCase().trim();
+
+                // Search across all orders including closed ones
+                const results = this.orders.filter(order => {
+                    const searchFields = [
+                        order.numero_orden,
+                        order.nombre_cliente,
+                        order.telefono_cliente,
+                        order.descripcion
+                    ].filter(Boolean).join(' ').toLowerCase();
+
+                    return searchFields.includes(searchQuery);
+                });
+
+                // Sort by date descending (most recent first)
+                results.sort((a, b) => {
+                    const dateA = new Date(a.fecha_pedido || '1970-01-01');
+                    const dateB = new Date(b.fecha_pedido || '1970-01-01');
+                    return dateB - dateA;
+                });
+
+                resolve({
+                    success: true,
+                    data: results
+                });
+            }, 400);
+        });
+    },
+
+    /**
+     * Get Notion page content for an order (simulates API call)
+     * @param {string} orderId - Order ID
+     * @returns {Object} Response with page content blocks
+     */
+    getOrderPageContent(orderId) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                // Mock page content based on order ID
+                const mockContent = {
+                    'mock-001': {
+                        blocks: [
+                            { type: 'heading_2', text: 'Especificaciones del Diamante' },
+                            { type: 'paragraph', text: 'Diamante central: 0.5ct, corte brillante, color G, claridad VS1' },
+                            { type: 'paragraph', text: 'Diamantes laterales: 6 x 0.05ct, mismo corte y calidad' },
+                            { type: 'heading_2', text: 'Medidas' },
+                            { type: 'paragraph', text: 'Talla del anillo: 6.5' },
+                            { type: 'paragraph', text: 'Ancho de la banda: 2mm' },
+                            { type: 'heading_2', text: 'Notas de Producción' },
+                            { type: 'paragraph', text: 'Grabado solicitado: "M&J 2026" en el interior' },
+                            { type: 'paragraph', text: 'Cliente pidió caja especial de terciopelo azul.' }
+                        ]
+                    },
+                    'mock-closed-001': {
+                        blocks: [
+                            { type: 'heading_2', text: 'Historial del Pedido' },
+                            { type: 'paragraph', text: '15 Nov 2025 - Pedido recibido' },
+                            { type: 'paragraph', text: '18 Nov 2025 - Oro entregado a joyero' },
+                            { type: 'paragraph', text: '25 Nov 2025 - Anillo terminado' },
+                            { type: 'paragraph', text: '01 Dic 2025 - Entregado al cliente' },
+                            { type: 'heading_2', text: 'Feedback del Cliente' },
+                            { type: 'paragraph', text: 'El cliente quedó muy satisfecho con el resultado. Mencionó que la piedra brilla más de lo esperado.' }
+                        ]
+                    },
+                    'mock-closed-002': {
+                        blocks: [
+                            { type: 'heading_2', text: 'Detalles de las Argollas' },
+                            { type: 'paragraph', text: 'Argolla hombre: Talla 10, 6mm ancho' },
+                            { type: 'paragraph', text: 'Argolla mujer: Talla 6, 4mm ancho' },
+                            { type: 'paragraph', text: 'Acabado: Comfort fit, pulido brillante exterior, mate interior' },
+                            { type: 'heading_2', text: 'Grabado' },
+                            { type: 'paragraph', text: 'Interior de ambas: R&L 15.11.2025' }
+                        ]
+                    }
+                };
+
+                const content = mockContent[orderId] || {
+                    blocks: [
+                        { type: 'paragraph', text: 'No hay notas adicionales para este pedido.' }
+                    ]
+                };
+
+                resolve({
+                    success: true,
+                    data: content
+                });
+            }, 300);
         });
     },
 

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Buscar Pedido - Prisma</title>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/buscar-pedido.css">
+</head>
+<body>
+    <div class="container-wide">
+        <a href="pedidos.html" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Volver a pedidos
+        </a>
+
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>Buscar Pedido</h1>
+                <p class="page-subtitle">Busca pedidos por nombre de cliente o número de orden (incluye pedidos cerrados)</p>
+            </div>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-container">
+            <div class="search-box">
+                <svg class="search-box-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" class="search-input" id="search-input" placeholder="Nombre del cliente o número de orden..." autofocus>
+                <button class="search-btn" id="search-btn" onclick="performSearch()">
+                    Buscar
+                </button>
+            </div>
+            <p class="search-hint">Presiona Enter o haz clic en Buscar para buscar</p>
+        </div>
+
+        <!-- Search Results -->
+        <div class="search-results" id="search-results">
+            <!-- Initial state -->
+            <div class="search-empty-state" id="empty-state">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <h3>Busca un pedido</h3>
+                <p>Ingresa el nombre del cliente o el número de orden para buscar.</p>
+            </div>
+
+            <!-- Results list -->
+            <div class="results-list hidden" id="results-list">
+                <div class="results-header">
+                    <span class="results-count" id="results-count">0 resultados</span>
+                </div>
+                <div class="results-grid" id="results-grid">
+                    <!-- Result cards will be rendered here -->
+                </div>
+            </div>
+
+            <!-- No results state -->
+            <div class="search-empty-state hidden" id="no-results-state">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+                <h3>No se encontraron resultados</h3>
+                <p>No hay pedidos que coincidan con tu búsqueda. Intenta con otros términos.</p>
+            </div>
+        </div>
+
+        <!-- Order Detail Modal -->
+        <div class="modal-overlay" id="detail-modal">
+            <div class="modal modal-lg">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="detail-modal-title">Detalles del Pedido</h2>
+                    <button class="modal-close" onclick="closeDetailModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                </div>
+                <div class="modal-body" id="detail-modal-body">
+                    <!-- Order details will be rendered here -->
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-secondary btn-sm" id="notion-link" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        Ver en Notion
+                    </a>
+                    <button class="btn btn-primary btn-sm" onclick="closeDetailModal()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Prisma · Buscar Pedido
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-card">
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loading-text">Buscando...</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/mock-data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/pages/buscar-pedido.js"></script>
+</body>
+</html>

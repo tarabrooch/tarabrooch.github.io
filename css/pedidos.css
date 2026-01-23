@@ -16,6 +16,12 @@
     margin-bottom: 4px;
 }
 
+.page-header-right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
 .order-count {
     font-size: 14px;
     color: var(--text-secondary);

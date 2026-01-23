@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Pagos - Prisma</title>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/pagos.css">
+</head>
+<body>
+    <!-- Password Gate -->
+    <div id="password-gate" class="password-gate">
+        <div class="password-gate-card">
+            <h2>Pagos</h2>
+            <p>Ingresa la contraseña para acceder</p>
+            <div class="password-container">
+                <input type="password" id="pagos-password-input" class="password-input" placeholder="Contraseña" onkeypress="handlePagosPasswordKeypress(event)">
+                <p id="pagos-password-error" class="error-message">Contraseña incorrecta</p>
+                <button class="password-btn" onclick="checkPagosPassword()">Entrar</button>
+            </div>
+            <a href="index.html" class="back-link" style="margin-top: 16px; display: inline-flex;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                Volver al panel
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content (hidden until authenticated) -->
+    <div id="main-content" class="container-wide" style="display: none;">
+        <a href="index.html" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Volver al panel
+        </a>
+
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>Pagos</h1>
+                <p class="pago-count" id="pago-count">Cargando...</p>
+            </div>
+            <div class="page-header-right">
+                <a href="nuevo-pago.html" class="btn btn-primary btn-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    Nuevo Pago
+                </a>
+            </div>
+        </div>
+
+        <!-- View Toggles and Filters -->
+        <div class="toolbar">
+            <div class="view-toggles">
+                <button class="view-toggle active" data-view="lista" onclick="switchPagoView('lista')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+                    Lista
+                </button>
+                <button class="view-toggle" data-view="kanban" onclick="switchPagoView('kanban')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="6" height="14" x="4" y="5" rx="2"/><rect width="6" height="10" x="14" y="7" rx="2"/></svg>
+                    Kanban
+                </button>
+                <button class="view-toggle" data-view="calendario" onclick="switchPagoView('calendario')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                    Calendario
+                </button>
+                <button class="view-toggle" data-view="grafica" onclick="switchPagoView('grafica')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+                    Gráfica
+                </button>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <select class="filter-select" id="filter-estado" onchange="applyPagoFilters()">
+                        <option value="">Todos los estados</option>
+                        <!-- Options rendered by JS -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select class="filter-select" id="filter-categoria" onchange="applyPagoFilters()">
+                        <option value="">Todas las categorías</option>
+                        <!-- Options rendered by JS -->
+                    </select>
+                </div>
+                <div class="filter-group search-group">
+                    <input type="text" class="filter-input" id="filter-search" placeholder="Buscar..." oninput="debouncePagoSearch()">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar Options (only visible in calendar view) -->
+        <div class="calendar-options hidden" id="pago-calendar-options">
+            <span class="calendar-options-label">Mostrar:</span>
+            <div class="toggle-group" style="display: inline-flex; gap: 8px;">
+                <label class="toggle-option active" id="calendar-toggle-individual" style="flex: none; padding: 8px 16px;">
+                    <input type="radio" name="calendar_mode" value="individual" checked onchange="togglePagoCalendarAggregation(false)">
+                    Individual
+                </label>
+                <label class="toggle-option" id="calendar-toggle-aggregated" style="flex: none; padding: 8px 16px;">
+                    <input type="radio" name="calendar_mode" value="aggregated" onchange="togglePagoCalendarAggregation(true)">
+                    Totales
+                </label>
+            </div>
+        </div>
+
+        <!-- FX Rate Options (visible in calendar aggregated & graph views) -->
+        <div class="fx-options hidden" id="fx-options">
+            <span class="fx-options-label">Tipo de cambio USD/MXN:</span>
+            <input type="number" class="fx-input" id="fx-rate-input" step="0.01" min="1">
+            <button class="btn btn-secondary btn-sm" onclick="fetchFxRate()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+                Actualizar
+            </button>
+        </div>
+
+        <!-- Views Container -->
+        <div class="views-container">
+            <!-- Lista View -->
+            <div class="view-panel active" id="view-lista">
+                <div class="pagos-grid" id="pagos-grid">
+                    <!-- Pago cards rendered by JS -->
+                </div>
+                <div class="empty-state hidden" id="empty-state-lista">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M12 2v20"/></svg>
+                    <h3>No hay pagos</h3>
+                    <p>No se encontraron pagos con los filtros seleccionados.</p>
+                    <a href="nuevo-pago.html" class="btn btn-primary btn-sm mt-2">Registrar Pago</a>
+                </div>
+            </div>
+
+            <!-- Kanban View -->
+            <div class="view-panel" id="view-kanban">
+                <div class="kanban-board pago-kanban-board" id="pago-kanban-board">
+                    <!-- Kanban columns rendered by JS -->
+                </div>
+            </div>
+
+            <!-- Calendario View -->
+            <div class="view-panel" id="view-calendario">
+                <div class="calendar-container" id="pago-calendar-container">
+                    <!-- Calendar rendered by JS -->
+                </div>
+            </div>
+
+            <!-- Gráfica View -->
+            <div class="view-panel" id="view-grafica">
+                <div class="graph-container" id="pago-graph-container">
+                    <!-- Graph rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Prisma · Pagos
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="pago-edit-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Pago</h2>
+                <button class="modal-close" onclick="closePagoEditModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="pago-modal-body">
+                <!-- Form rendered by JS -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePagoEditModal()">Cancelar</button>
+                <button class="btn btn-primary" id="pago-modal-save-btn" onclick="savePago()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-card">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Cargando...</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/mock-data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/components/pago-card.js"></script>
+    <script src="js/components/pago-edit-modal.js"></script>
+    <script src="js/components/pago-calendar.js"></script>
+    <script src="js/components/pago-graph.js"></script>
+    <script src="js/pages/pagos.js"></script>
+
+    <script>
+        // Password gate functions
+        function handlePagosPasswordKeypress(event) {
+            if (event.key === 'Enter') {
+                checkPagosPassword();
+            }
+        }
+
+        function checkPagosPassword() {
+            const input = document.getElementById('pagos-password-input');
+            const error = document.getElementById('pagos-password-error');
+
+            if (input.value === CONFIG.PAGOS_PASSWORD) {
+                error.classList.remove('visible');
+                input.classList.remove('error');
+
+                // Store pagos session
+                sessionStorage.setItem('prisma_pagos_session', JSON.stringify({
+                    authenticated: true,
+                    timestamp: Date.now()
+                }));
+
+                // Show main content
+                document.getElementById('password-gate').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+
+                // Initialize page
+                initPagosPage();
+            } else {
+                error.classList.add('visible');
+                input.classList.add('error', 'shake');
+                setTimeout(() => input.classList.remove('shake'), 300);
+                input.select();
+            }
+        }
+
+        // Check for existing session on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = sessionStorage.getItem('prisma_pagos_session');
+            if (session) {
+                try {
+                    const data = JSON.parse(session);
+                    if (data.authenticated) {
+                        document.getElementById('password-gate').style.display = 'none';
+                        document.getElementById('main-content').style.display = 'block';
+                        initPagosPage();
+                        return;
+                    }
+                } catch (e) {}
+            }
+
+            // Focus password input
+            document.getElementById('pagos-password-input').focus();
+        });
+    </script>
+</body>
+</html>

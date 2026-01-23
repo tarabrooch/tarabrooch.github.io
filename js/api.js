@@ -237,5 +237,126 @@ const API = {
         return this.request('/joyeros/balances', {
             method: 'GET'
         });
+    },
+
+    // ==========================================================================
+    // Pagos (Spending) API
+    // ==========================================================================
+
+    /**
+     * Create a new pago
+     * @param {Object} pagoData - Pago data
+     * @returns {Promise<Object>} Created pago
+     */
+    async createPago(pagoData) {
+        // Use mock data if enabled
+        if (USE_MOCK_DATA) {
+            return MockData.createPago(pagoData);
+        }
+
+        return this.request('/pagos', {
+            method: 'POST',
+            body: JSON.stringify({
+                data: {
+                    ...pagoData
+                },
+                created_by: Auth.getUserName()
+            })
+        });
+    },
+
+    /**
+     * Get all pagos with optional filters
+     * @param {Object} filters - Filter parameters
+     * @returns {Promise<Array>} Array of pagos
+     */
+    async getPagos(filters = {}) {
+        // Use mock data if enabled
+        if (USE_MOCK_DATA) {
+            return MockData.getPagos(filters);
+        }
+
+        const params = new URLSearchParams();
+
+        for (const [key, value] of Object.entries(filters)) {
+            if (value !== null && value !== undefined && value !== '') {
+                params.set(key, value);
+            }
+        }
+
+        const queryString = params.toString();
+        const endpoint = '/pagos' + (queryString ? '?' + queryString : '');
+
+        return this.request(endpoint, {
+            method: 'GET'
+        });
+    },
+
+    /**
+     * Get a single pago by ID
+     * @param {string} pagoId - Notion page ID
+     * @returns {Promise<Object>} Pago data
+     */
+    async getPago(pagoId) {
+        // Use mock data if enabled
+        if (USE_MOCK_DATA) {
+            return MockData.getPago(pagoId);
+        }
+
+        return this.request(`/pagos/${pagoId}`, {
+            method: 'GET'
+        });
+    },
+
+    /**
+     * Update a pago
+     * @param {string} pagoId - Notion page ID
+     * @param {Object} updates - Fields to update
+     * @param {string} userName - User making the update
+     * @param {Array} changes - List of changes for the log
+     * @returns {Promise<Object>} Updated pago
+     */
+    async updatePago(pagoId, updates, userName, changes = []) {
+        // Use mock data if enabled
+        if (USE_MOCK_DATA) {
+            return MockData.updatePago(pagoId, updates, userName, changes);
+        }
+
+        return this.request(`/pagos/${pagoId}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                data: updates,
+                user: userName,
+                changes: changes
+            })
+        });
+    },
+
+    // ==========================================================================
+    // FX Rate API
+    // ==========================================================================
+
+    /**
+     * Get current USD/MXN exchange rate
+     * Tries frankfurter.app API first, falls back to config default
+     * @returns {Promise<number>} Exchange rate
+     */
+    async getFxRate() {
+        try {
+            // Try frankfurter.app (free, no API key required)
+            const response = await fetch('https://api.frankfurter.app/latest?from=USD&to=MXN');
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.rates && data.rates.MXN) {
+                    return data.rates.MXN;
+                }
+            }
+        } catch (error) {
+            console.warn('FX API unavailable, using default rate:', error.message);
+        }
+
+        // Fallback to config default
+        return CONFIG.DEFAULT_FX_RATE;
     }
 };

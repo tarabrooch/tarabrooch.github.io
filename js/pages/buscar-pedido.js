@@ -195,7 +195,19 @@ async function openOrderDetail(orderId) {
     try {
         // Fetch page content from Notion
         const contentResponse = await API.getOrderPageContent(orderId);
-        const pageContent = contentResponse.success ? contentResponse.data : null;
+
+        // Handle different API response formats:
+        // - Standard format: { success: true, data: { blocks/results: [...] } }
+        // - Direct data format: { blocks/results: [...] }
+        // - Direct array format: [...]
+        let pageContent = null;
+        if (contentResponse) {
+            if (contentResponse.success && contentResponse.data) {
+                pageContent = contentResponse.data;
+            } else if (contentResponse.results || contentResponse.blocks || Array.isArray(contentResponse)) {
+                pageContent = contentResponse;
+            }
+        }
 
         renderOrderDetail(order, pageContent);
         openDetailModal();
@@ -497,11 +509,29 @@ function renderBlock(block, depth = 0) {
  * @returns {string} HTML string
  */
 function renderPageContent(pageContent) {
-    if (!pageContent || !pageContent.blocks || pageContent.blocks.length === 0) {
+    if (!pageContent) {
         return '<div class="page-content-empty">No hay contenido adicional en esta página.</div>';
     }
 
-    return pageContent.blocks.map(block => renderBlock(block, 0)).filter(html => html).join('');
+    // Handle different API response formats:
+    // - Mock data format: { blocks: [...] }
+    // - Notion API format: { results: [...] }
+    // - Direct array format: [...]
+    let blocks = null;
+
+    if (Array.isArray(pageContent)) {
+        blocks = pageContent;
+    } else if (pageContent.blocks && Array.isArray(pageContent.blocks)) {
+        blocks = pageContent.blocks;
+    } else if (pageContent.results && Array.isArray(pageContent.results)) {
+        blocks = pageContent.results;
+    }
+
+    if (!blocks || blocks.length === 0) {
+        return '<div class="page-content-empty">No hay contenido adicional en esta página.</div>';
+    }
+
+    return blocks.map(block => renderBlock(block, 0)).filter(html => html).join('');
 }
 
 /**

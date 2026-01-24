@@ -373,6 +373,125 @@ function renderOrderDetail(order, pageContent) {
 }
 
 /**
+ * Extract text content from a Notion block
+ * Handles both simplified format (block.text) and native Notion API format
+ * @param {Object} block - Notion block object
+ * @returns {string} Plain text content
+ */
+function extractBlockText(block) {
+    // Handle simplified mock format (block.text)
+    if (block.text !== undefined) {
+        return block.text;
+    }
+
+    const blockType = block.type;
+
+    // Handle child_page blocks - extract title
+    if (blockType === 'child_page' && block.child_page) {
+        return block.child_page.title || '';
+    }
+
+    // Handle child_database blocks
+    if (blockType === 'child_database' && block.child_database) {
+        return block.child_database.title || '';
+    }
+
+    // Handle blocks with rich_text content (paragraph, headings, list items, etc.)
+    const blockContent = block[blockType];
+    if (blockContent && blockContent.rich_text && Array.isArray(blockContent.rich_text)) {
+        return blockContent.rich_text.map(rt => rt.plain_text || rt.text?.content || '').join('');
+    }
+
+    // Handle toggle blocks (may have title in rich_text)
+    if (blockType === 'toggle' && blockContent) {
+        const toggleText = blockContent.rich_text?.map(rt => rt.plain_text || '').join('') || '';
+        return toggleText;
+    }
+
+    // Handle callout blocks
+    if (blockType === 'callout' && blockContent) {
+        const calloutText = blockContent.rich_text?.map(rt => rt.plain_text || '').join('') || '';
+        return calloutText;
+    }
+
+    // Handle quote blocks
+    if (blockType === 'quote' && blockContent) {
+        const quoteText = blockContent.rich_text?.map(rt => rt.plain_text || '').join('') || '';
+        return quoteText;
+    }
+
+    // Handle code blocks
+    if (blockType === 'code' && blockContent) {
+        const codeText = blockContent.rich_text?.map(rt => rt.plain_text || '').join('') || '';
+        return codeText;
+    }
+
+    // Handle divider (return empty or visual separator indicator)
+    if (blockType === 'divider') {
+        return '---';
+    }
+
+    return '';
+}
+
+/**
+ * Render a single Notion block as HTML
+ * @param {Object} block - Notion block object
+ * @param {number} depth - Nesting depth for indentation
+ * @returns {string} HTML string
+ */
+function renderBlock(block, depth = 0) {
+    const blockType = block.type;
+    const text = extractBlockText(block);
+    const indentClass = depth > 0 ? ` indent-${Math.min(depth, 3)}` : '';
+
+    // Determine CSS class based on block type
+    let blockClass = 'page-content-block';
+    if (blockType === 'heading_1' || blockType === 'heading_2' || blockType === 'heading_3') {
+        blockClass += ' heading';
+    } else if (blockType === 'child_page') {
+        blockClass += ' child-page';
+    } else if (blockType === 'child_database') {
+        blockClass += ' child-database';
+    } else if (blockType === 'bulleted_list_item') {
+        blockClass += ' list-item bulleted';
+    } else if (blockType === 'numbered_list_item') {
+        blockClass += ' list-item numbered';
+    } else if (blockType === 'to_do') {
+        const isChecked = block.to_do?.checked || false;
+        blockClass += ` to-do${isChecked ? ' checked' : ''}`;
+    } else if (blockType === 'toggle') {
+        blockClass += ' toggle';
+    } else if (blockType === 'callout') {
+        blockClass += ' callout';
+    } else if (blockType === 'quote') {
+        blockClass += ' quote';
+    } else if (blockType === 'code') {
+        blockClass += ' code';
+    } else if (blockType === 'divider') {
+        blockClass += ' divider';
+    }
+
+    blockClass += indentClass;
+
+    // Skip empty blocks except dividers
+    if (!text && blockType !== 'divider') {
+        return '';
+    }
+
+    // Render the block
+    let html = `<div class="${blockClass}">${escapeHtml(text)}</div>`;
+
+    // Recursively render children if present
+    if (block.children && Array.isArray(block.children) && block.children.length > 0) {
+        const childrenHtml = block.children.map(child => renderBlock(child, depth + 1)).join('');
+        html += childrenHtml;
+    }
+
+    return html;
+}
+
+/**
  * Render Notion page content blocks
  * @param {Object} pageContent - Page content data
  * @returns {string} HTML string
@@ -382,13 +501,7 @@ function renderPageContent(pageContent) {
         return '<div class="page-content-empty">No hay contenido adicional en esta página.</div>';
     }
 
-    return pageContent.blocks.map(block => {
-        const blockClass = block.type === 'heading_1' || block.type === 'heading_2' || block.type === 'heading_3'
-            ? 'page-content-block heading'
-            : 'page-content-block';
-
-        return `<div class="${blockClass}">${escapeHtml(block.text || '')}</div>`;
-    }).join('');
+    return pageContent.blocks.map(block => renderBlock(block, 0)).filter(html => html).join('');
 }
 
 /**

@@ -42,18 +42,44 @@ const CONFIG = {
     },
 
     // ==========================================================================
-    // Joyeros (Jewelry Makers)
+    // Joyeros (Jewelry Makers) and Proveedores (Providers)
     // ==========================================================================
 
-    // List of jewelry makers that can be assigned to orders
+    // List of jewelry makers and providers that can be assigned to orders
+    // type: 'joyero' = jewelry maker (gold movements tracked)
+    // type: 'proveedor' = external provider (no gold movement tracking)
     JOYEROS: [
-        { id: 'carlos', name: 'Carlos' },
-        { id: 'victor', name: 'Victor' },
-        { id: 'israel', name: 'Israel' },
-        { id: 'marcos', name: 'Marcos' },
-        { id: 'salvador', name: 'Salvador' },
-        { id: 'juan', name: 'Juan' },
+        { id: 'carlos', name: 'Carlos', type: 'joyero' },
+        { id: 'victor', name: 'Victor', type: 'joyero' },
+        { id: 'israel', name: 'Israel', type: 'joyero' },
+        { id: 'marcos', name: 'Marcos', type: 'joyero' },
+        { id: 'salvador', name: 'Salvador', type: 'joyero' },
+        { id: 'juan', name: 'Juan', type: 'joyero' },
+        { id: 'a2', name: 'A2', type: 'proveedor' },
+        { id: 'a30', name: 'A30', type: 'proveedor' },
+        { id: 'a20', name: 'A20', type: 'proveedor' },
+        { id: 'a99', name: 'A99', type: 'proveedor' },
+        { id: 'a19', name: 'A19', type: 'proveedor' },
+        { id: 'a14', name: 'A14', type: 'proveedor' },
+        { id: 'a10', name: 'A10', type: 'proveedor' },
+        { id: 'a6', name: 'A6', type: 'proveedor' },
     ],
+
+    // Helper to get only joyeros (no providers)
+    getJoyerosOnly() {
+        return this.JOYEROS.filter(j => j.type === 'joyero');
+    },
+
+    // Helper to get only providers
+    getProveedoresOnly() {
+        return this.JOYEROS.filter(j => j.type === 'proveedor');
+    },
+
+    // Helper to check if a name is a provider
+    isProveedor(name) {
+        const entry = this.JOYEROS.find(j => j.name === name);
+        return entry ? entry.type === 'proveedor' : false;
+    },
 
     // ==========================================================================
     // Order Types

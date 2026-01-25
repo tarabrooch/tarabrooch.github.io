@@ -40,10 +40,17 @@ const EditModal = {
             `<option value="${s.id}" ${order.estado === s.name ? 'selected' : ''}>${s.name}</option>`
         ).join('');
 
-        // Build joyero options
-        const joyeroOptions = CONFIG.JOYEROS.map(j =>
+        // Build joyero options with grouped sections (Joyeros and Proveedores)
+        const joyerosOptions = CONFIG.getJoyerosOnly().map(j =>
             `<option value="${j.name}" ${order.joyero === j.name ? 'selected' : ''}>${j.name}</option>`
         ).join('');
+        const proveedoresOptions = CONFIG.getProveedoresOnly().map(j =>
+            `<option value="${j.name}" ${order.joyero === j.name ? 'selected' : ''}>${j.name}</option>`
+        ).join('');
+        const joyeroOptions = `
+            <optgroup label="Joyeros">${joyerosOptions}</optgroup>
+            <optgroup label="Proveedores">${proveedoresOptions}</optgroup>
+        `;
 
         // Build tipo pedido options
         const tipoOptions = CONFIG.TIPOS_PEDIDO.map(t =>

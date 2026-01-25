@@ -54,15 +54,30 @@ function initFilters() {
         });
     }
 
-    // Joyero filter
+    // Joyero filter (with grouped Joyeros and Proveedores)
     const joyeroSelect = document.getElementById('filter-joyero');
     if (joyeroSelect && CONFIG.JOYEROS.length > 0) {
-        CONFIG.JOYEROS.forEach(joyero => {
+        // Add Joyeros group
+        const joyerosGroup = document.createElement('optgroup');
+        joyerosGroup.label = 'Joyeros';
+        CONFIG.getJoyerosOnly().forEach(joyero => {
             const option = document.createElement('option');
             option.value = joyero.name;
             option.textContent = joyero.name;
-            joyeroSelect.appendChild(option);
+            joyerosGroup.appendChild(option);
         });
+        joyeroSelect.appendChild(joyerosGroup);
+
+        // Add Proveedores group
+        const proveedoresGroup = document.createElement('optgroup');
+        proveedoresGroup.label = 'Proveedores';
+        CONFIG.getProveedoresOnly().forEach(proveedor => {
+            const option = document.createElement('option');
+            option.value = proveedor.name;
+            option.textContent = proveedor.name;
+            proveedoresGroup.appendChild(option);
+        });
+        joyeroSelect.appendChild(proveedoresGroup);
     }
 
     // Vendedora filter
@@ -290,11 +305,14 @@ window.handleSaveOrder = async function() {
     }
 
     // Check if we need to auto-deduct gold (status changed to "En Producción")
+    // Note: Providers (proveedores) do not track gold movements
     const statusChangedToProduccion = currentOrder.estado !== 'En Producción' && formData.estado === 'En Producción';
+    const isProvider = CONFIG.isProveedor(formData.joyero);
     const shouldDeductGold = statusChangedToProduccion &&
         formData.oro_gramos > 0 &&
         formData.joyero &&
-        formData.oro_con_joyero === true;
+        formData.oro_con_joyero === true &&
+        !isProvider;
 
     // Debug logging
     console.log('=== Gold Deduction Debug ===');
@@ -304,6 +322,7 @@ window.handleSaveOrder = async function() {
     console.log('formData.oro_gramos:', formData.oro_gramos);
     console.log('formData.joyero:', formData.joyero);
     console.log('formData.oro_con_joyero:', formData.oro_con_joyero);
+    console.log('isProvider:', isProvider);
     console.log('shouldDeductGold:', shouldDeductGold);
 
     // Show loading state

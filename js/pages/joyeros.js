@@ -42,11 +42,12 @@ async function initPage() {
 
 /**
  * Initialize joyero dropdown options
+ * Only includes joyeros (not providers) since providers don't track gold
  */
 function initJoyeroDropdown() {
     const select = document.getElementById('mov-joyero');
     if (select) {
-        CONFIG.JOYEROS.forEach(j => {
+        CONFIG.getJoyerosOnly().forEach(j => {
             const option = document.createElement('option');
             option.value = j.name;
             option.textContent = j.name;
@@ -104,13 +105,14 @@ async function loadMovements() {
 
 /**
  * Render joyero balance cards
+ * Only shows joyeros (not providers) since providers don't track gold
  */
 function renderJoyeroCards() {
     const container = document.getElementById('joyero-cards');
     if (!container) return;
 
-    // Sort joyeros by balance descending
-    const sortedJoyeros = CONFIG.JOYEROS.map(j => ({
+    // Sort joyeros by balance descending (exclude providers)
+    const sortedJoyeros = CONFIG.getJoyerosOnly().map(j => ({
         name: j.name,
         ...balances[j.name] || { balance: 0, total_entrada: 0, total_salida: 0 }
     })).sort((a, b) => b.balance - a.balance);

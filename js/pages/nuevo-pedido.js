@@ -244,14 +244,30 @@ window.printOrder = function() {
             tipoSelect.appendChild(option);
         });
 
-        // Populate joyeros dropdown
+        // Populate joyeros dropdown with grouped sections
         const joyeroSelect = document.getElementById('joyero');
-        CONFIG.JOYEROS.forEach(joyero => {
+
+        // Add Joyeros group
+        const joyerosGroup = document.createElement('optgroup');
+        joyerosGroup.label = 'Joyeros';
+        CONFIG.getJoyerosOnly().forEach(joyero => {
             const option = document.createElement('option');
             option.value = joyero.name;
             option.textContent = joyero.name;
-            joyeroSelect.appendChild(option);
+            joyerosGroup.appendChild(option);
         });
+        joyeroSelect.appendChild(joyerosGroup);
+
+        // Add Proveedores group
+        const proveedoresGroup = document.createElement('optgroup');
+        proveedoresGroup.label = 'Proveedores';
+        CONFIG.getProveedoresOnly().forEach(proveedor => {
+            const option = document.createElement('option');
+            option.value = proveedor.name;
+            option.textContent = proveedor.name;
+            proveedoresGroup.appendChild(option);
+        });
+        joyeroSelect.appendChild(proveedoresGroup);
 
         // Populate gemas origen dropdown
         const gemasOrigenSelect = document.getElementById('gemas_origen');

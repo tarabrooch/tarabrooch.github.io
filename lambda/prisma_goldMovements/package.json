@@ -1,0 +1,20 @@
+{
+  "name": "gold-movements-lambda",
+  "version": "1.0.0",
+  "description": "Lambda function for gold movements tracking per joyero",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"No tests configured\" && exit 0"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.14"
+  },
+  "keywords": [
+    "lambda",
+    "notion",
+    "gold",
+    "inventory"
+  ],
+  "author": "Prisma",
+  "license": "MIT"
+}

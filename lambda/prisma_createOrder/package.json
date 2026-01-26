@@ -1,0 +1,16 @@
+{
+  "name": "prisma-create-order",
+  "version": "1.0.0",
+  "description": "Lambda to create orders in Notion database",
+  "main": "index.mjs",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@notionhq/client": "^2.2.15"
+  }
+}

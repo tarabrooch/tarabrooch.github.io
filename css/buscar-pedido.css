@@ -214,6 +214,18 @@
     color: var(--text-secondary);
 }
 
+/* Certificate Badge */
+.certificate-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: #1e1b4b;
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
 /* Status badges - reuse from pedidos.css */
 .order-status {
     display: inline-block;

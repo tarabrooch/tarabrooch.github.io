@@ -368,19 +368,22 @@
     font-style: italic;
 }
 
-/* Certificate Icon */
-.certificate-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #9333ea;
-    margin-left: 6px;
-    vertical-align: middle;
+/* Certificate Badge */
+.certificate-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: #1e1b4b;
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 20px;
+    white-space: nowrap;
 }
 
-.certificate-icon svg {
-    width: 14px;
-    height: 14px;
+.certificate-badge-sm {
+    padding: 4px 10px;
+    font-size: 11px;
+    margin-top: 8px;
 }
 
 /* ==========================================================================

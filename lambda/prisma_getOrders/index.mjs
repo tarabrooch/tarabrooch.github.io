@@ -183,6 +183,7 @@ function transformPage(page) {
         gemas_listas: getCheckbox(props.gemas_listas),
         notas: getRichText(props.notas),
         vendedora: getSelect(props.vendedora),
+        requiere_certificado: getCheckbox(props.requiere_certificado),
         created_time: page.created_time,
         last_edited_time: page.last_edited_time
     };

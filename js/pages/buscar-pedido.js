@@ -144,6 +144,7 @@ function renderResultCard(order) {
             <div class="result-card-footer">
                 <span class="result-card-date">
                     ${order.fecha_entrega_cliente ? `Entrega: ${Utils.formatDate(order.fecha_entrega_cliente)}` : 'Sin fecha de entrega'}
+                    ${order.requiere_certificado ? '<span class="certificate-icon" title="Requiere Certificado"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span>' : ''}
                 </span>
             </div>
         </div>
@@ -319,6 +320,10 @@ function renderOrderDetail(order, pageContent) {
                 <div class="detail-item">
                     <span class="detail-label">Gemas Listas</span>
                     <span class="detail-value ${order.gemas_listas ? 'success' : ''}">${order.gemas_listas ? 'Sí' : 'No'}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Requiere Certificado</span>
+                    <span class="detail-value ${order.requiere_certificado ? 'warning' : ''}">${order.requiere_certificado ? 'Sí' : 'No'}</span>
                 </div>
                 ${order.gemas_requeridas ? `
                 <div class="detail-item full-width">

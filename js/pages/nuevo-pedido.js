@@ -422,7 +422,8 @@ window.printOrder = function() {
             joyero: document.getElementById('joyero').value || null,
             gemas_requeridas: document.getElementById('gemas_requeridas').value.trim() || null,
             gemas_origen: document.getElementById('gemas_origen').value || null,
-            notas: document.getElementById('notas').value.trim() || null
+            notas: document.getElementById('notas').value.trim() || null,
+            requiere_certificado: document.getElementById('requiere_certificado').checked
         };
 
         // If fecha_entrega_tienda not set, calculate it

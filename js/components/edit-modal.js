@@ -118,6 +118,14 @@ const EditModal = {
                 </label>
             </div>
 
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="edit-requiere_certificado" ${order.requiere_certificado ? 'checked' : ''}>
+                    <span class="checkbox-text">Requiere Certificado</span>
+                </label>
+                <p class="form-hint" style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; margin-left: 28px;">Marcar si el pedido requiere un certificado</p>
+            </div>
+
             <div class="divider"></div>
 
             <!-- Gemas -->
@@ -452,7 +460,8 @@ const EditModal = {
             gemas_requeridas: document.getElementById('edit-gemas_requeridas').value.trim() || null,
             gemas_origen: document.getElementById('edit-gemas_origen').value || null,
             gemas_listas: document.getElementById('edit-gemas_listas').checked,
-            notas: document.getElementById('edit-notas').value.trim() || null
+            notas: document.getElementById('edit-notas').value.trim() || null,
+            requiere_certificado: document.getElementById('edit-requiere_certificado').checked
         };
     },
 

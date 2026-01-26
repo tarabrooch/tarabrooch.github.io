@@ -417,6 +417,10 @@
     color: var(--warning);
 }
 
+.detail-value.warning {
+    color: var(--warning);
+}
+
 /* Order Header in Modal */
 .order-detail-header {
     background: var(--bg-tertiary);

@@ -126,6 +126,7 @@ const OrderCard = {
                     <div class="order-card-date ${dateClass}">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
                         ${Utils.formatDate(order.fecha_entrega_cliente)}
+                        ${order.requiere_certificado ? '<span class="certificate-icon" title="Requiere Certificado"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span>' : ''}
                     </div>
                     ${order.telefono_cliente ? `
                     <a href="tel:${order.telefono_cliente}" class="order-card-phone" onclick="event.stopPropagation()">
@@ -153,7 +154,7 @@ const OrderCard = {
                 <div class="kanban-card-tipo">${Utils.getTipoPedidoName(order.tipo_pedido) || order.tipo_pedido || '-'}</div>
                 <div class="kanban-card-footer">
                     <span class="kanban-card-total">${Utils.formatCurrency(order.importe_total)}</span>
-                    <span class="kanban-card-date ${dateClass}">${Utils.formatDate(order.fecha_entrega_cliente)}</span>
+                    <span class="kanban-card-date ${dateClass}">${Utils.formatDate(order.fecha_entrega_cliente)}${order.requiere_certificado ? ' <span class="certificate-icon" title="Requiere Certificado"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span>' : ''}</span>
                 </div>
             </div>
         `;

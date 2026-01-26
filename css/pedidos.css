@@ -368,6 +368,21 @@
     font-style: italic;
 }
 
+/* Certificate Icon */
+.certificate-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #9333ea;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+.certificate-icon svg {
+    width: 14px;
+    height: 14px;
+}
+
 /* ==========================================================================
    Kanban View
    ========================================================================== */

@@ -31,7 +31,7 @@
  * - creado_por: Text
  */
 
-const { Client } = require('@notionhq/client');
+import { Client } from '@notionhq/client';
 
 // Initialize Notion client
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
@@ -48,7 +48,7 @@ const headers = {
 /**
  * Main handler
  */
-exports.handler = async (event) => {
+export const handler = async (event) => {
     console.log('Event:', JSON.stringify(event));
 
     // Handle CORS preflight

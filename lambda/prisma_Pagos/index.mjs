@@ -58,7 +58,7 @@ export const handler = async (event) => {
 
     try {
         const method = event.httpMethod;
-        const path = event.path || event.resource;
+        const path = event.path || event.resource || '';
         const pathParams = event.pathParameters || {};
 
         // Route handling

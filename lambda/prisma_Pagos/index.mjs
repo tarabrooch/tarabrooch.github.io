@@ -51,14 +51,17 @@ const headers = {
 export const handler = async (event) => {
     console.log('Event:', JSON.stringify(event));
 
+    // Support both REST API (v1) and HTTP API (v2) event formats
+    const method = event.httpMethod || event.requestContext?.http?.method;
+
     // Handle CORS preflight
-    if (event.httpMethod === 'OPTIONS') {
+    if (method === 'OPTIONS') {
         return { statusCode: 200, headers, body: '' };
     }
 
     try {
-        const method = event.httpMethod;
-        const path = event.path || event.resource || '';
+        // HTTP API v2 uses rawPath, REST API v1 uses path or resource
+        const path = event.rawPath || event.path || event.resource || '';
         const pathParams = event.pathParameters || {};
 
         // Route handling

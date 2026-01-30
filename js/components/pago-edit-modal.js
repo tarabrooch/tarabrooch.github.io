@@ -159,6 +159,25 @@ const PagoEditModal = {
                 <textarea class="form-textarea" id="edit-pago-descripcion">${this.escapeHtml(pago.descripcion || '')}</textarea>
             </div>
 
+            <!-- Desglose Button (only for metodo_pago) -->
+            ${pago.categoria === 'metodo_pago' ? `
+            <div class="divider"></div>
+            <div class="desglose-section">
+                <div class="desglose-section-header">
+                    <span class="desglose-section-title">Desglose de Partidas</span>
+                    ${(() => {
+                        const ds = PagoCard.getDesgloseStatus(pago);
+                        return ds ? `<span class="desglose-badge ${ds.cssClass}">${ds.label}</span>` : '';
+                    })()}
+                </div>
+                <p class="desglose-section-desc">Clasifica las partidas de este método de pago como personal o negocio para el P&L.</p>
+                <button class="btn btn-secondary btn-sm desglose-open-btn" onclick="event.preventDefault(); closePagoEditModal(); setTimeout(function(){ openDesgloseModal('${pago.id}'); }, 300);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    Abrir Desglose
+                </button>
+            </div>
+            ` : ''}
+
             <!-- Notion Link -->
             ${pago.id ? `
             <div style="text-align: center; font-size: 11px; color: #9ca3af; margin-top: 16px;">

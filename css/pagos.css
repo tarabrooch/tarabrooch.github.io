@@ -994,6 +994,285 @@
 }
 
 /* ==========================================================================
+   Desglose (Breakdown) Styles
+   ========================================================================== */
+
+/* Badge on pago cards */
+.desglose-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.desglose-badge:hover {
+    transform: scale(1.05);
+}
+
+.desglose-badge-pending {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fbbf2440;
+}
+
+.desglose-badge-partial {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #f59e0b40;
+}
+
+.desglose-badge-complete {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #22c55e40;
+}
+
+/* Section inside edit modal */
+.desglose-section {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px dashed var(--border);
+}
+
+.desglose-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.desglose-section-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.desglose-section-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.desglose-open-btn {
+    width: 100%;
+}
+
+/* Desglose Modal */
+#desglose-modal .modal {
+    max-width: 700px;
+}
+
+#desglose-modal .modal-body {
+    max-height: 70vh;
+}
+
+.desglose-summary-header {
+    background: #f3f4f6;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.desglose-pago-total {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.desglose-pago-total strong {
+    font-size: 18px;
+    color: var(--text-primary);
+}
+
+/* Line items container */
+.desglose-items-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.desglose-empty {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* Individual line item */
+.desglose-item {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.desglose-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.desglose-item-number {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.desglose-item-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.desglose-item-remove:hover {
+    color: #dc2626;
+    background: #fef2f2;
+}
+
+.desglose-item-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.desglose-item-row:last-child {
+    margin-bottom: 0;
+}
+
+.desglose-item-field {
+    flex: 1;
+}
+
+.desglose-item-field-desc {
+    flex: 2;
+}
+
+.desglose-item-field-monto {
+    flex: 1;
+}
+
+.desglose-field-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.desglose-field-label input[type="checkbox"] {
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+/* Tipo toggle (personal / negocio) */
+.desglose-tipo-toggle {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-tertiary);
+    border-radius: 6px;
+    padding: 2px;
+}
+
+.desglose-tipo-btn {
+    flex: 1;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+
+.desglose-tipo-btn.active.desglose-tipo-negocio {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.desglose-tipo-btn.active.desglose-tipo-personal {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.desglose-tipo-btn:hover:not(.active) {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+}
+
+/* Category selects inside desglose */
+.desglose-cat-select {
+    font-size: 13px;
+}
+
+/* Add button */
+.desglose-add-btn {
+    width: 100%;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* Totals */
+.desglose-totals {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+}
+
+.desglose-totals-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.desglose-totals-row:last-child {
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+.desglose-totals-negocio {
+    color: #166534;
+}
+
+.desglose-totals-personal {
+    color: #92400e;
+}
+
+.desglose-balance-ok {
+    color: #166534 !important;
+}
+
+.desglose-balance-pending {
+    color: #b45309 !important;
+}
+
+.desglose-balance-over {
+    color: #dc2626 !important;
+}
+
+/* ==========================================================================
    Mobile Responsive
    ========================================================================== */
 
@@ -1084,5 +1363,20 @@
 
     .fx-options {
         flex-wrap: wrap;
+    }
+
+    /* Desglose responsive */
+    .desglose-item-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .desglose-item-field-desc,
+    .desglose-item-field-monto {
+        flex: none;
+    }
+
+    #desglose-modal .modal {
+        max-width: 100%;
     }
 }

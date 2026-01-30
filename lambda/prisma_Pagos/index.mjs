@@ -73,6 +73,16 @@ export const handler = async (event) => {
             return await getPagos(event);
         }
 
+        if (path.match(/\/pagos\/[^/]+\/desglose$/) && method === 'GET') {
+            const id = path.split('/')[2] || pathParams.id || pathParams.proxy;
+            return await getDesglose(id);
+        }
+
+        if (path.match(/\/pagos\/[^/]+\/desglose$/) && method === 'PUT') {
+            const id = path.split('/')[2] || pathParams.id || pathParams.proxy;
+            return await updateDesglose(id, event);
+        }
+
         if (path.match(/\/pagos\/[^/]+$/) && method === 'GET') {
             return await getPago(pathParams.id || pathParams.proxy);
         }
@@ -321,12 +331,84 @@ async function updatePago(pagoId, event) {
 }
 
 /**
+ * Get desglose (breakdown) for a pago
+ */
+async function getDesglose(pagoId) {
+    console.log('Getting desglose for pago:', pagoId);
+
+    const response = await notion.pages.retrieve({ page_id: pagoId });
+    const desgloseRaw = getRichText(response.properties.desglose);
+
+    let desglose = [];
+    if (desgloseRaw) {
+        try {
+            desglose = JSON.parse(desgloseRaw);
+        } catch (e) {
+            console.warn('Failed to parse desglose JSON:', e);
+        }
+    }
+
+    return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: true, data: desglose })
+    };
+}
+
+/**
+ * Update desglose (breakdown) for a pago
+ */
+async function updateDesglose(pagoId, event) {
+    const body = JSON.parse(event.body);
+    const desglose = body.desglose || [];
+    const userName = body.user || 'Sistema';
+
+    console.log('Updating desglose for pago:', pagoId, 'items:', desglose.length);
+
+    const desgloseJson = JSON.stringify(desglose);
+
+    // Notion rich_text has a 2000 char limit per block; use multiple blocks if needed
+    const chunks = [];
+    for (let i = 0; i < desgloseJson.length; i += 2000) {
+        chunks.push({ text: { content: desgloseJson.slice(i, i + 2000) } });
+    }
+
+    await notion.pages.update({
+        page_id: pagoId,
+        properties: {
+            'desglose': { rich_text: chunks }
+        }
+    });
+
+    // Log the change
+    const changeLogEntry = `${formatTimestamp()} - Desglose actualizado (${desglose.length} partidas) por ${userName}`;
+    await notion.blocks.children.append({
+        block_id: pagoId,
+        children: [
+            {
+                object: 'block',
+                type: 'paragraph',
+                paragraph: {
+                    rich_text: [{ text: { content: changeLogEntry } }]
+                }
+            }
+        ]
+    });
+
+    return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: true, data: desglose })
+    };
+}
+
+/**
  * Transform Notion page to pago object
  */
 function transformPago(page) {
     const props = page.properties;
 
-    return {
+    const pago = {
         id: page.id,
         monto: getNumber(props.monto),
         moneda: getSelect(props.moneda) || 'MXN',
@@ -340,6 +422,20 @@ function transformPago(page) {
         created_at: page.created_time,
         updated_at: page.last_edited_time
     };
+
+    // Include desglose if present (for metodo_pago category)
+    const desgloseRaw = getRichText(props.desglose);
+    if (desgloseRaw) {
+        try {
+            pago.desglose = JSON.parse(desgloseRaw);
+        } catch (e) {
+            pago.desglose = null;
+        }
+    } else {
+        pago.desglose = null;
+    }
+
+    return pago;
 }
 
 // ==========================================================================

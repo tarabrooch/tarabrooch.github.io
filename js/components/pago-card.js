@@ -74,6 +74,38 @@ const PagoCard = {
     },
 
     /**
+     * Check if a pago is a payment method type that needs breakdown
+     * @param {Object} pago - Pago data
+     * @returns {boolean}
+     */
+    isMetodoPago(pago) {
+        return pago.categoria === 'metodo_pago';
+    },
+
+    /**
+     * Get desglose status info for a metodo_pago pago
+     * @param {Object} pago - Pago data
+     * @returns {Object} Status with label, class, count
+     */
+    getDesgloseStatus(pago) {
+        if (!this.isMetodoPago(pago)) return null;
+
+        const desglose = pago.desglose;
+        if (!desglose || !Array.isArray(desglose) || desglose.length === 0) {
+            return { label: 'Desglose pendiente', cssClass: 'desglose-badge-pending', count: 0 };
+        }
+
+        const total = desglose.reduce((sum, item) => sum + (parseFloat(item.monto) || 0), 0);
+        const balanced = Math.abs(total - (pago.monto || 0)) < 0.01;
+
+        if (balanced) {
+            return { label: `Desglose: ${desglose.length} partida${desglose.length !== 1 ? 's' : ''}`, cssClass: 'desglose-badge-complete', count: desglose.length };
+        }
+
+        return { label: `Desglose: incompleto`, cssClass: 'desglose-badge-partial', count: desglose.length };
+    },
+
+    /**
      * Render a full pago card for list view
      * @param {Object} pago - Pago data
      * @returns {string} HTML string
@@ -89,6 +121,7 @@ const PagoCard = {
         const finalDateClass = showDateWarning ? dateClass : '';
 
         const categoryName = this.getCategoryName(pago.categoria);
+        const desgloseStatus = this.getDesgloseStatus(pago);
 
         return `
             <div class="pago-card" data-pago-id="${pago.id}" onclick="openPagoEditModal('${pago.id}')">
@@ -122,6 +155,11 @@ const PagoCard = {
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
                         ${Utils.formatDate(pago.fecha_vencimiento)}
                     </div>
+                    ${desgloseStatus ? `
+                    <span class="desglose-badge ${desgloseStatus.cssClass}" onclick="event.stopPropagation(); openDesgloseModal('${pago.id}')" title="Ver desglose">
+                        ${desgloseStatus.label}
+                    </span>
+                    ` : ''}
                 </div>
             </div>
         `;
@@ -142,12 +180,18 @@ const PagoCard = {
         const finalDateClass = showDateWarning ? dateClass : '';
 
         const categoryName = this.getCategoryName(pago.categoria);
+        const desgloseStatus = this.getDesgloseStatus(pago);
 
         return `
             <div class="kanban-card pago-kanban-card" data-pago-id="${pago.id}" onclick="openPagoEditModal('${pago.id}')">
                 <div class="kanban-card-amount">${this.formatPagoCurrency(pago.monto, pago.moneda)}</div>
                 <div class="kanban-card-category">${this.escapeHtml(Utils.truncate(categoryName, 20))}</div>
                 <div class="kanban-card-subcategory">${this.escapeHtml(Utils.truncate(pago.subcategoria || '', 25))}</div>
+                ${desgloseStatus ? `
+                <div class="desglose-badge ${desgloseStatus.cssClass}" onclick="event.stopPropagation(); openDesgloseModal('${pago.id}')" style="margin-bottom: 6px; font-size: 10px;">
+                    ${desgloseStatus.label}
+                </div>
+                ` : ''}
                 <div class="kanban-card-footer">
                     <span class="kanban-card-fiscal">${pago.es_fiscal ? '📄' : ''}</span>
                     <span class="kanban-card-date ${finalDateClass}">${Utils.formatDate(pago.fecha_vencimiento)}</span>

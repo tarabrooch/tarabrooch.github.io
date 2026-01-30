@@ -231,6 +231,17 @@ const CONFIG = {
                 'Publicidad',
                 'Varios'
             ]
+        },
+        'metodo_pago': {
+            name: 'Método de Pago',
+            subcategories: [
+                'American Express',
+                'Visa',
+                'Mastercard',
+                'Transferencia',
+                'Efectivo',
+                'Otro'
+            ]
         }
     },
 

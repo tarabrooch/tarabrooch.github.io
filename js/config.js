@@ -236,7 +236,7 @@ const CONFIG = {
             ]
         },
         'metodo_pago': {
-            name: 'Método de Pago',
+            name: 'Tarjetas de Crédito',
             subcategories: [
                 'American Express',
                 'Visa',

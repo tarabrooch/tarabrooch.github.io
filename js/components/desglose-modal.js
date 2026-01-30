@@ -12,6 +12,7 @@ const DesgloseModal = {
     lineItems: [],
     isLoading: false,
     pendingPago: null,
+    expandedItems: new Set(),
 
     /**
      * Check if desglose session is authenticated
@@ -126,6 +127,8 @@ const DesgloseModal = {
             this.lineItems = [];
         }
 
+        // Start with all saved items collapsed
+        this.expandedItems = new Set();
         this.render();
 
         // If no cached desglose, try fetching from API
@@ -168,6 +171,7 @@ const DesgloseModal = {
      * Add a new empty line item
      */
     addLineItem() {
+        const newIndex = this.lineItems.length;
         this.lineItems.push({
             descripcion: '',
             monto: 0,
@@ -176,15 +180,38 @@ const DesgloseModal = {
             subcategoria: '',
             es_fiscal: false
         });
+        // Auto-expand the new item
+        this.expandedItems.add(newIndex);
         this.render();
 
         // Focus the new description input
         setTimeout(() => {
-            const inputs = document.querySelectorAll('.desglose-item-desc');
-            if (inputs.length > 0) {
-                inputs[inputs.length - 1].focus();
-            }
+            const input = document.getElementById(`desglose-desc-${newIndex}`);
+            if (input) input.focus();
         }, 50);
+    },
+
+    /**
+     * Toggle expand/collapse for a line item
+     * @param {number} index - Line item index
+     */
+    toggleItem(index) {
+        this.syncFromDOM();
+        if (this.expandedItems.has(index)) {
+            this.expandedItems.delete(index);
+        } else {
+            this.expandedItems.add(index);
+        }
+        this.render();
+    },
+
+    /**
+     * Check if a line item has been filled in (has description and monto)
+     * @param {Object} item - Line item
+     * @returns {boolean}
+     */
+    isItemComplete(item) {
+        return !!(item.descripcion && item.descripcion.trim() && item.monto > 0);
     },
 
     /**
@@ -193,6 +220,13 @@ const DesgloseModal = {
      */
     removeLineItem(index) {
         this.lineItems.splice(index, 1);
+        // Rebuild expanded set (shift indices down)
+        const newExpanded = new Set();
+        this.expandedItems.forEach(i => {
+            if (i < index) newExpanded.add(i);
+            else if (i > index) newExpanded.add(i - 1);
+        });
+        this.expandedItems = newExpanded;
         this.render();
     },
 
@@ -326,60 +360,82 @@ const DesgloseModal = {
         let itemsHtml = '';
         this.lineItems.forEach((item, i) => {
             const isPersonal = item.tipo === 'personal';
-            const tipoBadgeClass = isPersonal ? 'desglose-tipo-personal' : 'desglose-tipo-negocio';
+            const isExpanded = this.expandedItems.has(i);
+            const isFilled = this.isItemComplete(item);
             const tipoBadgeText = isPersonal ? 'Personal' : 'Negocio';
+            const tipoBadgeClass = isPersonal ? 'desglose-tipo-personal' : 'desglose-tipo-negocio';
 
-            itemsHtml += `
-                <div class="desglose-item" data-index="${i}">
-                    <div class="desglose-item-header">
-                        <span class="desglose-item-number">#${i + 1}</span>
-                        <button class="desglose-item-remove" onclick="DesgloseModal.syncFromDOM(); DesgloseModal.removeLineItem(${i})" title="Eliminar">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                        </button>
-                    </div>
-                    <div class="desglose-item-row">
-                        <div class="desglose-item-field desglose-item-field-desc">
-                            <label class="desglose-field-label">Descripción</label>
-                            <input type="text" class="form-input desglose-item-desc" id="desglose-desc-${i}" value="${this.escapeAttr(item.descripcion)}" placeholder="Ej: Compra de piedras">
-                        </div>
-                        <div class="desglose-item-field desglose-item-field-monto">
-                            <label class="desglose-field-label">Monto</label>
-                            <input type="number" class="form-input desglose-item-monto" id="desglose-monto-${i}" value="${item.monto || ''}" step="0.01" min="0" placeholder="0.00" onchange="DesgloseModal.syncFromDOM(); DesgloseModal.render();">
+            if (!isExpanded && isFilled) {
+                // Collapsed summary row
+                const catName = item.categoria ? (CONFIG.PAGO_CATEGORIES[item.categoria]?.name || item.categoria) : '';
+                itemsHtml += `
+                    <div class="desglose-item desglose-item-collapsed" data-index="${i}" onclick="DesgloseModal.toggleItem(${i})">
+                        <div class="desglose-collapsed-row">
+                            <svg class="desglose-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            <span class="desglose-collapsed-desc">${this.escapeAttr(item.descripcion)}</span>
+                            <span class="desglose-collapsed-badge ${tipoBadgeClass}">${tipoBadgeText}</span>
+                            ${catName ? `<span class="desglose-collapsed-cat">${this.escapeAttr(catName)}</span>` : ''}
+                            <span class="desglose-collapsed-amount">${this.formatCurrency(item.monto)}</span>
                         </div>
                     </div>
-                    <div class="desglose-item-row">
-                        <div class="desglose-item-field">
-                            <label class="desglose-field-label">Tipo</label>
-                            <div class="desglose-tipo-toggle">
-                                <button class="desglose-tipo-btn ${!isPersonal ? 'active desglose-tipo-negocio' : ''}" onclick="DesgloseModal.syncFromDOM(); DesgloseModal.updateLineItem(${i}, 'tipo', 'negocio')">Negocio</button>
-                                <button class="desglose-tipo-btn ${isPersonal ? 'active desglose-tipo-personal' : ''}" onclick="DesgloseModal.syncFromDOM(); DesgloseModal.updateLineItem(${i}, 'tipo', 'personal')">Personal</button>
+                `;
+            } else {
+                // Expanded editable form
+                itemsHtml += `
+                    <div class="desglose-item desglose-item-expanded" data-index="${i}">
+                        <div class="desglose-item-header">
+                            <span class="desglose-item-number" ${isFilled ? `onclick="DesgloseModal.toggleItem(${i})" style="cursor:pointer;"` : ''}>
+                                ${isFilled ? `<svg class="desglose-chevron desglose-chevron-down" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>` : ''}
+                                #${i + 1}
+                            </span>
+                            <button class="desglose-item-remove" onclick="DesgloseModal.syncFromDOM(); DesgloseModal.removeLineItem(${i})" title="Eliminar">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                            </button>
+                        </div>
+                        <div class="desglose-item-row">
+                            <div class="desglose-item-field desglose-item-field-desc">
+                                <label class="desglose-field-label">Descripción</label>
+                                <input type="text" class="form-input desglose-item-desc" id="desglose-desc-${i}" value="${this.escapeAttr(item.descripcion)}" placeholder="Ej: Compra de piedras">
+                            </div>
+                            <div class="desglose-item-field desglose-item-field-monto">
+                                <label class="desglose-field-label">Monto</label>
+                                <input type="number" class="form-input desglose-item-monto" id="desglose-monto-${i}" value="${item.monto || ''}" step="0.01" min="0" placeholder="0.00" onchange="DesgloseModal.syncFromDOM(); DesgloseModal.render();">
                             </div>
                         </div>
-                        <div class="desglose-item-field">
-                            <label class="desglose-field-label">
-                                <input type="checkbox" ${item.es_fiscal ? 'checked' : ''} onchange="DesgloseModal.syncFromDOM(); DesgloseModal.updateLineItem(${i}, 'es_fiscal', this.checked)">
-                                Fiscal
-                            </label>
+                        <div class="desglose-item-row">
+                            <div class="desglose-item-field">
+                                <label class="desglose-field-label">Tipo</label>
+                                <div class="desglose-tipo-toggle">
+                                    <button class="desglose-tipo-btn ${!isPersonal ? 'active desglose-tipo-negocio' : ''}" onclick="DesgloseModal.syncFromDOM(); DesgloseModal.updateLineItem(${i}, 'tipo', 'negocio')">Negocio</button>
+                                    <button class="desglose-tipo-btn ${isPersonal ? 'active desglose-tipo-personal' : ''}" onclick="DesgloseModal.syncFromDOM(); DesgloseModal.updateLineItem(${i}, 'tipo', 'personal')">Personal</button>
+                                </div>
+                            </div>
+                            <div class="desglose-item-field">
+                                <label class="desglose-field-label">
+                                    <input type="checkbox" ${item.es_fiscal ? 'checked' : ''} onchange="DesgloseModal.syncFromDOM(); DesgloseModal.updateLineItem(${i}, 'es_fiscal', this.checked)">
+                                    Fiscal
+                                </label>
+                            </div>
                         </div>
+                        ${!isPersonal ? `
+                        <div class="desglose-item-row">
+                            <div class="desglose-item-field">
+                                <label class="desglose-field-label">Categoría P&L</label>
+                                <select class="form-select desglose-cat-select" onchange="DesgloseModal.syncFromDOM(); DesgloseModal.updateLineItem(${i}, 'categoria', this.value)">
+                                    ${this.buildCategoryOptions(item.categoria)}
+                                </select>
+                            </div>
+                            <div class="desglose-item-field">
+                                <label class="desglose-field-label">Subcategoría</label>
+                                <select class="form-select" onchange="DesgloseModal.syncFromDOM(); DesgloseModal.updateLineItem(${i}, 'subcategoria', this.value)">
+                                    ${this.buildSubcategoryOptions(item.categoria, item.subcategoria)}
+                                </select>
+                            </div>
+                        </div>
+                        ` : ''}
                     </div>
-                    ${!isPersonal ? `
-                    <div class="desglose-item-row">
-                        <div class="desglose-item-field">
-                            <label class="desglose-field-label">Categoría P&L</label>
-                            <select class="form-select desglose-cat-select" onchange="DesgloseModal.syncFromDOM(); DesgloseModal.updateLineItem(${i}, 'categoria', this.value)">
-                                ${this.buildCategoryOptions(item.categoria)}
-                            </select>
-                        </div>
-                        <div class="desglose-item-field">
-                            <label class="desglose-field-label">Subcategoría</label>
-                            <select class="form-select" onchange="DesgloseModal.syncFromDOM(); DesgloseModal.updateLineItem(${i}, 'subcategoria', this.value)">
-                                ${this.buildSubcategoryOptions(item.categoria, item.subcategoria)}
-                            </select>
-                        </div>
-                    </div>
-                    ` : ''}
-                </div>
-            `;
+                `;
+            }
         });
 
         // Totals summary

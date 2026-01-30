@@ -142,6 +142,9 @@ const CONFIG = {
     // Password for Pagos module (separate from dashboard)
     PAGOS_PASSWORD: 'pagostara',
 
+    // Password for Desglose (breakdown) access within Pagos
+    DESGLOSE_PASSWORD: 'desglosetara',
+
     // Pago Statuses with colors
     // Colors: orange (presupuestado), red (confirmado), green (pagado), black (cancelado)
     PAGO_ESTADOS: [

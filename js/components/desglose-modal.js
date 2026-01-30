@@ -11,6 +11,31 @@ const DesgloseModal = {
     currentPagoMoneda: 'MXN',
     lineItems: [],
     isLoading: false,
+    pendingPago: null,
+
+    /**
+     * Check if desglose session is authenticated
+     * @returns {boolean}
+     */
+    isAuthenticated() {
+        const session = sessionStorage.getItem('prisma_desglose_session');
+        if (!session) return false;
+        try {
+            return JSON.parse(session).authenticated === true;
+        } catch {
+            return false;
+        }
+    },
+
+    /**
+     * Store desglose session
+     */
+    storeSession() {
+        sessionStorage.setItem('prisma_desglose_session', JSON.stringify({
+            authenticated: true,
+            timestamp: Date.now()
+        }));
+    },
 
     /**
      * Open the desglose modal for a given pago
@@ -21,6 +46,79 @@ const DesgloseModal = {
         this.currentPagoMonto = pago.monto || 0;
         this.currentPagoMoneda = pago.moneda || 'MXN';
 
+        document.getElementById('desglose-modal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        // Check auth before showing content
+        if (!this.isAuthenticated()) {
+            this.pendingPago = pago;
+            this.renderPasswordGate();
+            return;
+        }
+
+        await this.loadContent(pago);
+    },
+
+    /**
+     * Render password gate inside the modal body
+     */
+    renderPasswordGate() {
+        const body = document.getElementById('desglose-modal-body');
+        body.innerHTML = `
+            <div class="desglose-password-gate">
+                <div class="desglose-password-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <h3 class="desglose-password-title">Acceso al Desglose</h3>
+                <p class="desglose-password-desc">Ingresa la contraseña para ver y editar el desglose de partidas.</p>
+                <input type="password" class="form-input desglose-password-input" id="desglose-password-input" placeholder="Contraseña" onkeypress="if(event.key==='Enter') DesgloseModal.checkPassword()">
+                <p class="desglose-password-error" id="desglose-password-error">Contraseña incorrecta</p>
+                <button class="btn btn-primary desglose-password-btn" onclick="DesgloseModal.checkPassword()">Entrar</button>
+            </div>
+        `;
+
+        // Hide the footer buttons while on password gate
+        document.getElementById('desglose-modal-save-btn').style.display = 'none';
+
+        setTimeout(() => {
+            const input = document.getElementById('desglose-password-input');
+            if (input) input.focus();
+        }, 100);
+    },
+
+    /**
+     * Validate the entered password
+     */
+    async checkPassword() {
+        const input = document.getElementById('desglose-password-input');
+        const error = document.getElementById('desglose-password-error');
+
+        if (input.value === CONFIG.DESGLOSE_PASSWORD) {
+            error.classList.remove('visible');
+            input.classList.remove('error');
+            this.storeSession();
+
+            // Restore save button visibility
+            document.getElementById('desglose-modal-save-btn').style.display = '';
+
+            // Load the actual content
+            if (this.pendingPago) {
+                await this.loadContent(this.pendingPago);
+                this.pendingPago = null;
+            }
+        } else {
+            error.classList.add('visible');
+            input.classList.add('error', 'shake');
+            setTimeout(() => input.classList.remove('shake'), 300);
+            input.select();
+        }
+    },
+
+    /**
+     * Load desglose content after authentication
+     * @param {Object} pago - Pago data
+     */
+    async loadContent(pago) {
         // If desglose data already loaded on the pago object, use it
         if (pago.desglose && Array.isArray(pago.desglose)) {
             this.lineItems = JSON.parse(JSON.stringify(pago.desglose));
@@ -29,8 +127,6 @@ const DesgloseModal = {
         }
 
         this.render();
-        document.getElementById('desglose-modal').classList.add('active');
-        document.body.style.overflow = 'hidden';
 
         // If no cached desglose, try fetching from API
         if (!pago.desglose) {

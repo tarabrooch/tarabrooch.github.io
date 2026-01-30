@@ -373,6 +373,37 @@ const API = {
     },
 
     // ==========================================================================
+    // Desglose (Breakdown) API
+    // ==========================================================================
+
+    /**
+     * Get desglose (breakdown) for a pago
+     * @param {string} pagoId - Pago ID
+     * @returns {Promise<Array>} Array of desglose line items
+     */
+    async getDesglose(pagoId) {
+        return this.request(`/pagos/${pagoId}/desglose`, {
+            method: 'GET'
+        });
+    },
+
+    /**
+     * Update desglose (breakdown) for a pago
+     * @param {string} pagoId - Pago ID
+     * @param {Array} desglose - Array of breakdown line items
+     * @returns {Promise<Object>} Updated desglose
+     */
+    async updateDesglose(pagoId, desglose) {
+        return this.request(`/pagos/${pagoId}/desglose`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                desglose: desglose,
+                user: Auth.getUserName()
+            })
+        });
+    },
+
+    // ==========================================================================
     // FX Rate API
     // ==========================================================================
 

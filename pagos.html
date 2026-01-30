@@ -173,6 +173,25 @@
         </div>
     </div>
 
+    <!-- Desglose Modal -->
+    <div class="modal-overlay" id="desglose-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Desglose de Partidas</h2>
+                <button class="modal-close" onclick="closeDesgloseModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="desglose-modal-body">
+                <!-- Desglose form rendered by JS -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDesgloseModal()">Cancelar</button>
+                <button class="btn btn-primary" id="desglose-modal-save-btn" onclick="saveDesglose()">Guardar Desglose</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-card">
@@ -189,6 +208,7 @@
     <script src="js/api.js"></script>
     <script src="js/components/pago-card.js"></script>
     <script src="js/components/pago-edit-modal.js"></script>
+    <script src="js/components/desglose-modal.js"></script>
     <script src="js/components/pago-calendar.js"></script>
     <script src="js/components/pago-graph.js"></script>
     <script src="js/pages/pagos.js"></script>

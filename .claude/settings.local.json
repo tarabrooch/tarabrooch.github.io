@@ -6,7 +6,21 @@
       "Bash(powershell -Command \"Compress-Archive -Path ''index.js'', ''package.json'', ''node_modules'' -DestinationPath ''../gold-movements.zip'' -Force\")",
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nAdded print receipt feature and removed date validation\n\n- Added print button after order creation for Epson LX-350\n- Receipt shows order details, amounts, delivery date\n- Store header changed to TARA BROOCH\n- Removed validation requiring dates to be after today\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+<<<<<<< Updated upstream
       "Bash(python -c:*)"
+=======
+      "Bash(git merge:*)",
+      "Bash(git pull:*)",
+      "Bash(claude mcp add-json obsidian --scope user '{\"\"type\"\":\"\"stdio\"\",\"\"command\"\":\"\"npx\"\",\"\"args\"\":[\"\"@mauricio.wolff/mcp-obsidian@latest\"\",\"\"C:/Users/eduar/obsidian-personal-v2\"\"]}')",
+      "Bash(aws lambda update-function-code:*)",
+      "Bash(aws configure list:*)",
+      "Bash(where:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(wsl --status:*)",
+      "Bash(wsl bash -c \"cd /mnt/c/Users/eduar/repos/prisma-site-github-static/lambda/prisma_Pagos && rm -f ../prisma_Pagos.zip && zip -r ../prisma_Pagos.zip .\")",
+      "Bash(wsl bash -c \"sudo apt-get update && sudo apt-get install -y zip\")",
+      "Bash(python:*)"
+>>>>>>> Stashed changes
     ]
   }
 }

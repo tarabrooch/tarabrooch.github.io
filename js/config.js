@@ -157,30 +157,43 @@ const CONFIG = {
     // Pago Categories and Subcategories
     // Subcategories can be proveedores in some cases (e.g., mercancia)
     PAGO_CATEGORIES: {
-        'mercancia': {
-            name: 'Mercancía / Inventario',
-            subcategories: [
-                'Proveedor Oro',
-                'Proveedor Plata',
-                'Proveedor Gemas',
-                'Proveedor Cadenas',
-                'Proveedor Piedras',
-                'Proveedor Hallazgos',
-                'Otro Proveedor'
-            ]
-        },
-        'operacion': {
-            name: 'Gastos de Operación',
+        'fijos': {
+            name: 'Gastos Fijos',
             subcategories: [
                 'Renta',
-                'Luz',
                 'Agua',
+                'Luz',
                 'Internet',
-                'Teléfono',
+                'Alarmas',
+                'Seguridad',
                 'Limpieza',
                 'Mantenimiento',
-                'Seguridad',
                 'Seguros'
+            ]
+        },
+        'proveedores': {
+            name: 'Proveedores',
+            subcategories: [
+                'A1',
+                'A2',
+                'A3',
+                'A6',
+                'A9',
+                'A10',
+                'A12',
+                'A14',
+                'A15',
+                'A16',
+                'A17', 'A19', 'A20', 'A30', 'A31','A32'
+            ]
+        },
+        'creditos': {
+            name: 'Creditos y Bancos',
+            subcategories: [
+                'Crédito Banregio',
+                'Crédito Banamex',
+                'Otros Créditos',
+                'Otras Comisiones Bancarias'
             ]
         },
         'nomina': {
@@ -194,25 +207,50 @@ const CONFIG = {
                 'Comisiones'
             ]
         },
-        'servicios': {
-            name: 'Servicios Profesionales',
+        'gastos_operacion': {
+            name: 'Gastos Variables',
             subcategories: [
+                'Bolsas',
+                'Papelería',
+                'Fotografía',
+                'Focos',
+                'Fotos',
+                'Publicidad',
+                'Imprenta',
+                'Paquetería',
+                'Gasolina'
+            ]
+        },
+        'servicios': {
+            name: 'Servicios de Joyeros y Profesionales',
+            subcategories: [
+                'Joyero - Salvador',
+                'Joyero - Carlos',
+                'Joyero - Victor',
+                'Joyero - Israel',
+                'Joyero - Marcos',
+                'Joyero - Juan',
+                'Joyero - Otros',
+                'Joyero - Paco',
+                'Sistemas - Victor',
+                'Electrico',
                 'Contador',
                 'Abogado',
                 'Diseñador',
                 'Marketing',
-                'Joyero Externo',
                 'Consultoría'
             ]
         },
         'impuestos': {
             name: 'Impuestos',
             subcategories: [
-                'ISR',
-                'IVA',
+                'ISR Alba',
+                'ISR Lalo',
+                'IVA Alba',
+                'IVA Lalo',
                 'Predial',
                 'Tenencia',
-                'Otros Impuestos'
+                'Impuesto del Estado'
             ]
         },
         'equipo': {
@@ -222,17 +260,6 @@ const CONFIG = {
                 'Equipo de Cómputo',
                 'Mobiliario',
                 'Maquinaria'
-            ]
-        },
-        'otros': {
-            name: 'Otros Gastos',
-            subcategories: [
-                'Papelería',
-                'Empaque',
-                'Envíos',
-                'Viáticos',
-                'Publicidad',
-                'Varios'
             ]
         },
         'metodo_pago': {

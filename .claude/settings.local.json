@@ -5,7 +5,8 @@
       "Bash(zip:*)",
       "Bash(powershell -Command \"Compress-Archive -Path ''index.js'', ''package.json'', ''node_modules'' -DestinationPath ''../gold-movements.zip'' -Force\")",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdded print receipt feature and removed date validation\n\n- Added print button after order creation for Epson LX-350\n- Receipt shows order details, amounts, delivery date\n- Store header changed to TARA BROOCH\n- Removed validation requiring dates to be after today\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdded print receipt feature and removed date validation\n\n- Added print button after order creation for Epson LX-350\n- Receipt shows order details, amounts, delivery date\n- Store header changed to TARA BROOCH\n- Removed validation requiring dates to be after today\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(python -c:*)"
     ]
   }
 }

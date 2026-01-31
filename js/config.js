@@ -187,23 +187,6 @@ const CONFIG = {
                 'A17', 'A19', 'A20', 'A30', 'A31','A32'
             ]
         },
-<<<<<<< Updated upstream
-=======
-        'gastos de operacion': {
-            name: 'Gastos Variables',
-            subcategories: [
-                'Bolsas',
-                'Papelería',
-                'Fotografía',
-                'Focos',
-                'Fotos',
-                'Publicidad',
-                'Imprenta',
-                'Paquetería',
-                'Gasolina'
-            ]
-        },
->>>>>>> Stashed changes
         'creditos': {
             name: 'Creditos y Bancos',
             subcategories: [
@@ -224,7 +207,6 @@ const CONFIG = {
                 'Comisiones'
             ]
         },
-<<<<<<< Updated upstream
         'gastos_operacion': {
             name: 'Gastos Variables',
             subcategories: [
@@ -242,11 +224,6 @@ const CONFIG = {
         'servicios': {
             name: 'Servicios de Joyeros y Profesionales',
             subcategories: [
-=======
-        'servicios': {
-            name: 'Servicios de Joyeros y Profesionales',
-            subcategories: [
->>>>>>> Stashed changes
                 'Joyero - Salvador',
                 'Joyero - Carlos',
                 'Joyero - Victor',
@@ -285,7 +262,6 @@ const CONFIG = {
                 'Maquinaria'
             ]
         },
-<<<<<<< Updated upstream
         'metodo_pago': {
             name: 'Tarjetas de Crédito',
             subcategories: [
@@ -295,15 +271,6 @@ const CONFIG = {
                 'Transferencia',
                 'Efectivo',
                 'Otro'
-=======
-        'tarjetas_credito': {
-            name: 'Tarjetas de Crédito',
-            subcategories: [
-                'American Express',
-                'AMEX Black',
-                'Banregio',
-                'Inbursa'
->>>>>>> Stashed changes
             ]
         }
     },

@@ -25,8 +25,33 @@ export const handler = async (event) => {
     try {
         console.log('Received event:', JSON.stringify(event, null, 2));
 
+        // Check if this is a page content request: /orders/{id}/content
+        const pathParams = event.pathParameters || {};
+        const path = event.path || event.rawPath || '';
+
+        if (pathParams.id && path.endsWith('/content')) {
+            const pageId = pathParams.id;
+            const blocksResponse = await notion.blocks.children.list({
+                block_id: pageId,
+                page_size: 100
+            });
+
+            return {
+                statusCode: 200,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    success: true,
+                    data: {
+                        results: blocksResponse.results,
+                        has_more: blocksResponse.has_more,
+                        next_cursor: blocksResponse.next_cursor
+                    }
+                })
+            };
+        }
+
         const params = event.queryStringParameters || {};
-        
+
         // Check if this is a search request
         const isSearch = params.q && params.q.trim().length >= 2;
         

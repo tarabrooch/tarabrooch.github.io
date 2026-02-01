@@ -832,12 +832,52 @@ const MockData = {
                             { type: 'heading_2', text: 'Especificaciones del Diamante' },
                             { type: 'paragraph', text: 'Diamante central: 0.5ct, corte brillante, color G, claridad VS1' },
                             { type: 'paragraph', text: 'Diamantes laterales: 6 x 0.05ct, mismo corte y calidad' },
+                            { type: 'heading_2', text: 'Referencia Visual' },
+                            {
+                                type: 'image',
+                                image: {
+                                    type: 'external',
+                                    external: { url: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600' },
+                                    caption: [{ plain_text: 'Referencia del estilo de anillo solicitado' }]
+                                }
+                            },
                             { type: 'heading_2', text: 'Medidas' },
                             { type: 'paragraph', text: 'Talla del anillo: 6.5' },
                             { type: 'paragraph', text: 'Ancho de la banda: 2mm' },
                             { type: 'heading_2', text: 'Notas de Producción' },
                             { type: 'paragraph', text: 'Grabado solicitado: "M&J 2026" en el interior' },
-                            { type: 'paragraph', text: 'Cliente pidió caja especial de terciopelo azul.' }
+                            { type: 'paragraph', text: 'Cliente pidió caja especial de terciopelo azul.' },
+                            {
+                                type: 'bookmark',
+                                bookmark: {
+                                    url: 'https://www.gia.edu/diamond-quality-factor',
+                                    caption: [{ plain_text: 'Guía de calidad de diamantes GIA' }]
+                                }
+                            }
+                        ]
+                    },
+                    'mock-004': {
+                        blocks: [
+                            { type: 'heading_2', text: 'Diseño de la Pulsera' },
+                            { type: 'paragraph', text: 'Eslabón cubano grueso, 22cm de largo, oro amarillo 14k.' },
+                            {
+                                type: 'image',
+                                image: {
+                                    type: 'external',
+                                    external: { url: 'https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=600' },
+                                    caption: [{ plain_text: 'Estilo cubano de referencia' }]
+                                }
+                            },
+                            {
+                                type: 'file',
+                                file: {
+                                    type: 'external',
+                                    external: { url: 'https://example.com/medidas-pulsera.pdf' },
+                                    name: 'medidas-pulsera.pdf',
+                                    caption: []
+                                }
+                            },
+                            { type: 'paragraph', text: 'Cliente prefiere broche de seguridad doble.' }
                         ]
                     },
                     'mock-closed-001': {

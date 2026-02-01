@@ -72,6 +72,17 @@ const EditModal = {
                 <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">${Utils.getTipoPedidoName(order.tipo_pedido) || order.tipo_pedido || 'Sin tipo'} · ${Utils.formatCurrency(order.importe_total)} · Saldo: ${Utils.formatCurrency(saldo)}</div>
             </div>
 
+            <!-- Page Content (loaded asynchronously - shows images, files, links from Notion) -->
+            <div id="edit-modal-page-content" class="page-content-section" style="margin-bottom: 20px;">
+                <div class="page-content-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Contenido de Notion
+                </div>
+                <div class="page-content-blocks" id="edit-modal-blocks">
+                    <div class="page-content-empty">Cargando contenido...</div>
+                </div>
+            </div>
+
             <!-- ========== COMMON FIELDS ========== -->
 
             <!-- Status -->
@@ -259,17 +270,6 @@ const EditModal = {
                         Ver en Notion
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-left: 4px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
-                </div>
-            </div>
-
-            <!-- Page Content (loaded asynchronously) -->
-            <div id="edit-modal-page-content" class="page-content-section" style="margin-top: 16px; display: none;">
-                <div class="page-content-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    Contenido de Notion
-                </div>
-                <div class="page-content-blocks" id="edit-modal-blocks">
-                    <div class="page-content-empty">Cargando contenido...</div>
                 </div>
             </div>
         `;
@@ -520,9 +520,7 @@ const EditModal = {
                 }
             }
 
-            const html = BlockRenderer.renderPageContent(pageContent);
-
-            // Only show the section if there's actual content (not just the empty message)
+            // Check if there's actual content
             const hasContent = pageContent && (
                 (Array.isArray(pageContent) && pageContent.length > 0) ||
                 (pageContent.blocks && pageContent.blocks.length > 0) ||
@@ -530,13 +528,14 @@ const EditModal = {
             );
 
             if (hasContent) {
-                blocksEl.innerHTML = html;
-                container.style.display = '';
+                blocksEl.innerHTML = BlockRenderer.renderPageContent(pageContent);
             } else {
+                // No content - hide the section entirely
                 container.style.display = 'none';
             }
         } catch (error) {
             console.error('Error loading page content:', error);
+            // API error - hide the section since we can't load content
             container.style.display = 'none';
         }
     }

@@ -26,11 +26,17 @@ export const handler = async (event) => {
         console.log('Received event:', JSON.stringify(event, null, 2));
 
         // Check if this is a page content request: /orders/{id}/content
-        const pathParams = event.pathParameters || {};
         const path = event.path || event.rawPath || '';
+        const contentMatch = path.match(/\/orders\/([^\/]+)\/content/);
 
-        if (pathParams.id && path.endsWith('/content')) {
-            const pageId = pathParams.id;
+        // Also check pathParameters as fallback
+        let contentPageId = contentMatch ? contentMatch[1] : null;
+        if (!contentPageId && event.pathParameters?.id && path.endsWith('/content')) {
+            contentPageId = event.pathParameters.id;
+        }
+
+        if (contentPageId) {
+            const pageId = contentPageId;
             const blocksResponse = await notion.blocks.children.list({
                 block_id: pageId,
                 page_size: 100

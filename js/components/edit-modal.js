@@ -17,6 +17,7 @@ const EditModal = {
         this.render(order);
         document.getElementById('edit-modal').classList.add('active');
         document.body.style.overflow = 'hidden';
+        this.loadPageContent(order.id);
     },
 
     /**
@@ -260,6 +261,17 @@ const EditModal = {
                     </a>
                 </div>
             </div>
+
+            <!-- Page Content (loaded asynchronously) -->
+            <div id="edit-modal-page-content" class="page-content-section" style="margin-top: 16px; display: none;">
+                <div class="page-content-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Contenido de Notion
+                </div>
+                <div class="page-content-blocks" id="edit-modal-blocks">
+                    <div class="page-content-empty">Cargando contenido...</div>
+                </div>
+            </div>
         `;
 
         document.getElementById('modal-body').innerHTML = html;
@@ -485,6 +497,48 @@ const EditModal = {
         const div = document.createElement('div');
         div.textContent = str;
         return div.innerHTML;
+    },
+
+    /**
+     * Load and display Notion page content in the modal
+     * @param {string} orderId - Order ID
+     */
+    async loadPageContent(orderId) {
+        const container = document.getElementById('edit-modal-page-content');
+        const blocksEl = document.getElementById('edit-modal-blocks');
+        if (!container || !blocksEl) return;
+
+        try {
+            const contentResponse = await API.getOrderPageContent(orderId);
+
+            let pageContent = null;
+            if (contentResponse) {
+                if (contentResponse.success && contentResponse.data) {
+                    pageContent = contentResponse.data;
+                } else if (contentResponse.results || contentResponse.blocks || Array.isArray(contentResponse)) {
+                    pageContent = contentResponse;
+                }
+            }
+
+            const html = BlockRenderer.renderPageContent(pageContent);
+
+            // Only show the section if there's actual content (not just the empty message)
+            const hasContent = pageContent && (
+                (Array.isArray(pageContent) && pageContent.length > 0) ||
+                (pageContent.blocks && pageContent.blocks.length > 0) ||
+                (pageContent.results && pageContent.results.length > 0)
+            );
+
+            if (hasContent) {
+                blocksEl.innerHTML = html;
+                container.style.display = '';
+            } else {
+                container.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error loading page content:', error);
+            container.style.display = 'none';
+        }
     }
 };
 

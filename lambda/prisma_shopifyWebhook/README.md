@@ -33,7 +33,7 @@ Set these on the Lambda function:
 
 | Variable | Required | Description |
 |---|---|---|
-| `NOTION_API_KEY` | Yes | Notion integration API key |
+| `NOTION_TOKEN` | Yes | Notion integration token (also accepts `NOTION_API_KEY`) |
 | `NOTION_DATABASE_ID` | Yes | Notion pedidos database ID |
 | `SHOPIFY_WEBHOOK_SECRET` | Yes | Shopify webhook signing secret (from your Shopify app) |
 
@@ -49,7 +49,7 @@ aws lambda create-function \
   --handler index.handler \
   --zip-file fileb://function.zip \
   --role arn:aws:iam::YOUR_ACCOUNT:role/YOUR_LAMBDA_ROLE \
-  --environment "Variables={NOTION_API_KEY=secret_xxx,NOTION_DATABASE_ID=xxx,SHOPIFY_WEBHOOK_SECRET=xxx}"
+  --environment "Variables={NOTION_TOKEN=secret_xxx,NOTION_DATABASE_ID=xxx,SHOPIFY_WEBHOOK_SECRET=xxx}"
 ```
 
 ### 3. Create API Gateway Endpoint

@@ -4,12 +4,6 @@
   "description": "Lambda to receive Shopify order webhooks and create orders in Notion",
   "main": "index.mjs",
   "type": "module",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@notionhq/client": "^2.2.15"
   }

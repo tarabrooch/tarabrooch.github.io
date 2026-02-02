@@ -1,14 +1,23 @@
-// -------------------------------------
-// Prisma Shopify Webhook Lambda
-// -------------------------------------
-// Receives Shopify orders/create webhooks and creates
-// corresponding orders in the Notion pedidos database.
-// -------------------------------------
+/**
+ * Prisma Shopify Webhook Lambda
+ *
+ * Receives Shopify orders/create webhooks and creates
+ * corresponding orders in the Notion pedidos database.
+ *
+ * SETUP:
+ * 1. Deploy to AWS Lambda (Node.js 18.x+)
+ * 2. Set environment variables:
+ *    - NOTION_TOKEN (or NOTION_API_KEY): Notion integration token
+ *    - NOTION_DATABASE_ID: Notion pedidos database ID
+ *    - SHOPIFY_WEBHOOK_SECRET: Shopify webhook signing secret
+ * 3. Create API Gateway POST endpoint and register it in Shopify
+ */
 import { Client } from '@notionhq/client';
 import crypto from 'crypto';
 
+// Initialize Notion client (supports both env var conventions)
 const notion = new Client({
-    auth: process.env.NOTION_API_KEY
+    auth: process.env.NOTION_TOKEN || process.env.NOTION_API_KEY
 });
 
 const DATABASE_ID = process.env.NOTION_DATABASE_ID;
@@ -26,7 +35,7 @@ export const handler = async (event) => {
             console.error('Webhook verification failed');
             return {
                 statusCode: 401,
-                body: JSON.stringify({ error: 'Invalid webhook signature' })
+                body: JSON.stringify({ success: false, error: 'Invalid webhook signature' })
             };
         }
 
@@ -34,9 +43,9 @@ export const handler = async (event) => {
         const shopifyOrder = JSON.parse(event.body);
 
         // 3. Skip test/bogus orders
-        if (shopifyOrder.test || shopifyOrder.source_name === 'web' && shopifyOrder.gateway === 'bogus') {
+        if (shopifyOrder.test || (shopifyOrder.source_name === 'web' && shopifyOrder.gateway === 'bogus')) {
             console.log('Skipping test order:', shopifyOrder.id);
-            return { statusCode: 200, body: JSON.stringify({ skipped: true }) };
+            return { statusCode: 200, body: JSON.stringify({ success: true, skipped: true }) };
         }
 
         // 4. Map Shopify order to Notion properties
@@ -65,6 +74,7 @@ export const handler = async (event) => {
         return {
             statusCode: 500,
             body: JSON.stringify({
+                success: false,
                 error: 'Error processing webhook',
                 details: error.message
             })
@@ -113,6 +123,9 @@ function verifyWebhook(event) {
 /**
  * Map a Shopify order object to Notion database properties.
  *
+ * Uses the same field-by-type grouping as prisma_createOrder/buildProperties()
+ * so the property structure is consistent across all order-creating Lambdas.
+ *
  * Shopify fields used:
  *   - name (#1001)           → numero_orden (prefixed "SH-")
  *   - customer name          → nombre_cliente
@@ -124,70 +137,62 @@ function verifyWebhook(event) {
  *   - created_at             → fecha_pedido
  */
 function mapShopifyToNotion(order) {
-    const customerName = buildCustomerName(order);
-    const customerPhone = getCustomerPhone(order);
-    const description = buildDescription(order);
-    const tipoPedido = inferTipoPedido(order);
     const totalPrice = parseFloat(order.total_price) || 0;
-    const anticipo = calculateAnticipo(order, totalPrice);
     const fechaPedido = order.created_at
         ? order.created_at.split('T')[0]
         : new Date().toISOString().split('T')[0];
 
-    const properties = {
-        // Title - order number prefixed with SH- to identify Shopify origin
-        numero_orden: {
-            title: [{ text: { content: `SH-${order.name || order.order_number || order.id}` } }]
-        },
+    // Prepare mapped values
+    const data = {
+        numero_orden: `SH-${order.name || order.order_number || order.id}`,
+        nombre_cliente: buildCustomerName(order),
+        telefono_cliente: getCustomerPhone(order),
+        descripcion: buildDescription(order),
+        notas: buildNotes(order),
+        importe_total: totalPrice,
+        anticipo: calculateAnticipo(order, totalPrice),
+        estado: 'Pendiente Aprobación',
+        tipo_pedido: inferTipoPedido(order),
+        fecha_pedido: fechaPedido
+    };
 
-        // Customer name
-        nombre_cliente: {
-            rich_text: customerName ? [{ text: { content: customerName } }] : []
-        },
+    // Build Notion properties using field-by-type grouping
+    // (mirrors prisma_createOrder buildProperties pattern)
+    const properties = {};
 
-        // Customer phone
-        telefono_cliente: {
-            rich_text: customerPhone ? [{ text: { content: customerPhone } }] : []
-        },
+    // Title property
+    properties.numero_orden = {
+        title: [{ text: { content: data.numero_orden } }]
+    };
 
-        // Order type (inferred from line items)
-        tipo_pedido: {
-            select: { name: tipoPedido }
-        },
+    // Rich text properties
+    const richTextFields = ['nombre_cliente', 'telefono_cliente', 'descripcion', 'notas'];
+    richTextFields.forEach(field => {
+        const value = data[field] ? truncate(data[field], 2000) : null;
+        properties[field] = {
+            rich_text: value ? [{ text: { content: value } }] : []
+        };
+    });
 
-        // Description (line items summary)
-        descripcion: {
-            rich_text: description ? [{ text: { content: truncate(description, 2000) } }] : []
-        },
+    // Number properties
+    const numberFields = ['importe_total', 'anticipo'];
+    numberFields.forEach(field => {
+        properties[field] = {
+            number: data[field] !== null ? Number(data[field]) : null
+        };
+    });
 
-        // Total price
-        importe_total: {
-            number: totalPrice
-        },
+    // Select properties
+    const selectFields = ['estado', 'tipo_pedido'];
+    selectFields.forEach(field => {
+        properties[field] = {
+            select: data[field] ? { name: data[field] } : null
+        };
+    });
 
-        // Amount paid so far
-        anticipo: {
-            number: anticipo
-        },
-
-        // Default status: Pendiente Aprobacion
-        estado: {
-            select: { name: 'Pendiente Aprobación' }
-        },
-
-        // Order date
-        fecha_pedido: {
-            date: { start: fechaPedido }
-        },
-
-        // Notes - include Shopify order notes + source tag
-        notas: {
-            rich_text: [{
-                text: {
-                    content: truncate(buildNotes(order), 2000)
-                }
-            }]
-        }
+    // Date properties
+    properties.fecha_pedido = {
+        date: { start: data.fecha_pedido }
     };
 
     return properties;

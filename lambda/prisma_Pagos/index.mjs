@@ -24,7 +24,7 @@
  * - moneda: Select (MXN, USD)
  * - es_fiscal: Checkbox
  * - categoria: Select (from CONFIG.PAGO_CATEGORIES keys)
- * - subcategoria: Text
+ * - subcategoria: Select
  * - fecha_vencimiento: Date
  * - estado: Select (presupuestado, confirmado, pagado, cancelado)
  * - descripcion: Text
@@ -127,7 +127,7 @@ async function createPago(event) {
         'moneda': { select: { name: data.moneda || 'MXN' } },
         'es_fiscal': { checkbox: data.es_fiscal || false },
         'categoria': { select: { name: data.categoria } },
-        'subcategoria': { rich_text: [{ text: { content: data.subcategoria || '' } }] },
+        'subcategoria': { select: { name: data.subcategoria || '' } },
         'estado': { select: { name: data.estado || 'presupuestado' } },
         'creado_por': { rich_text: [{ text: { content: createdBy } }] }
     };
@@ -275,7 +275,7 @@ async function updatePago(pagoId, event) {
     }
 
     if (data.subcategoria !== undefined) {
-        properties['subcategoria'] = { rich_text: [{ text: { content: data.subcategoria || '' } }] };
+        properties['subcategoria'] = { select: { name: data.subcategoria || '' } };
     }
 
     if (data.fecha_vencimiento !== undefined) {
@@ -414,7 +414,7 @@ function transformPago(page) {
         moneda: getSelect(props.moneda) || 'MXN',
         es_fiscal: getCheckbox(props.es_fiscal),
         categoria: getSelect(props.categoria),
-        subcategoria: getRichText(props.subcategoria),
+        subcategoria: getSelect(props.subcategoria),
         fecha_vencimiento: getDate(props.fecha_vencimiento),
         estado: getSelect(props.estado) || 'presupuestado',
         descripcion: getRichText(props.descripcion),

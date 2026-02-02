@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Cortes - Prisma</title>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/cortes.css">
+</head>
+<body>
+    <!-- Password Gate -->
+    <div id="password-gate" class="password-gate">
+        <div class="password-gate-card">
+            <h2>Cortes</h2>
+            <p>Ingresa la contraseña para acceder</p>
+            <div class="password-container">
+                <input type="password" id="cortes-password-input" class="password-input" placeholder="Contraseña" onkeypress="handleCortesPasswordKeypress(event)">
+                <p id="cortes-password-error" class="error-message">Contraseña incorrecta</p>
+                <button class="password-btn" onclick="checkCortesPassword()">Entrar</button>
+            </div>
+            <a href="index.html" class="back-link" style="margin-top: 16px; display: inline-flex;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                Volver al panel
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content (hidden until authenticated) -->
+    <div id="main-content" class="container-wide" style="display: none;">
+        <a href="index.html" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Volver al panel
+        </a>
+
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>Cortes de Caja</h1>
+                <p class="corte-subtitle" id="corte-subtitle">Registro de ventas diarias</p>
+            </div>
+            <div class="page-header-right">
+                <button class="btn btn-secondary btn-sm" id="print-report-btn" onclick="printCorteReport()" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                    Imprimir
+                </button>
+            </div>
+        </div>
+
+        <!-- View Toggles -->
+        <div class="toolbar">
+            <div class="view-toggles">
+                <button class="view-toggle active" data-view="registro" onclick="switchCorteView('registro')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    Registrar
+                </button>
+                <button class="view-toggle" data-view="historial" onclick="switchCorteView('historial')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+                    Historial
+                </button>
+                <button class="view-toggle" data-view="reporte" onclick="switchCorteView('reporte')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    Reporte
+                </button>
+            </div>
+        </div>
+
+        <!-- Views Container -->
+        <div class="views-container">
+
+            <!-- Registro (Entry) View -->
+            <div class="view-panel active" id="view-registro">
+                <div class="corte-form-card">
+                    <div class="corte-form-header">
+                        <h2>Nuevo Corte</h2>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <input type="date" class="form-input corte-date-input" id="corte-fecha" onchange="onCorteDateChange()">
+                        </div>
+                    </div>
+
+                    <!-- Vendedora selector -->
+                    <div class="corte-vendedora-selector">
+                        <label class="form-label">Vendedora</label>
+                        <div class="user-chips" id="corte-vendedora-chips">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Payment method inputs -->
+                    <div class="corte-payment-form" id="corte-payment-form" style="display: none;">
+                        <div class="corte-payment-grid" id="corte-payment-grid">
+                            <!-- Rendered by JS -->
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Número de Notas</label>
+                            <input type="number" class="form-input" id="corte-num-notas" min="0" step="1" placeholder="0" oninput="updateCorteTotal()">
+                        </div>
+
+                        <div class="corte-total-row">
+                            <span class="corte-total-label">Total</span>
+                            <span class="corte-total-value" id="corte-total">$0.00</span>
+                        </div>
+
+                        <button class="btn btn-primary" id="corte-save-btn" onclick="saveCorte()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            Guardar Corte
+                        </button>
+                    </div>
+
+                    <!-- Existing cortes for selected date -->
+                    <div class="corte-existing-section" id="corte-existing-section" style="display: none;">
+                        <div class="divider"></div>
+                        <h3 class="corte-existing-title">Cortes registrados hoy</h3>
+                        <div id="corte-existing-list">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Historial (History) View -->
+            <div class="view-panel" id="view-historial">
+                <div class="corte-history-filters">
+                    <div class="filter-group">
+                        <select class="filter-select" id="filter-vendedora" onchange="applyCorteHistoryFilters()">
+                            <option value="">Todas las vendedoras</option>
+                            <!-- Options rendered by JS -->
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="form-label" style="margin-bottom: 0; font-size: 12px;">Desde</label>
+                        <input type="date" class="filter-input" id="filter-fecha-desde" onchange="applyCorteHistoryFilters()">
+                    </div>
+                    <div class="filter-group">
+                        <label class="form-label" style="margin-bottom: 0; font-size: 12px;">Hasta</label>
+                        <input type="date" class="filter-input" id="filter-fecha-hasta" onchange="applyCorteHistoryFilters()">
+                    </div>
+                </div>
+                <div class="cortes-history-grid" id="cortes-history-grid">
+                    <!-- Rendered by JS -->
+                </div>
+                <div class="empty-state hidden" id="empty-state-historial">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M12 2v20"/></svg>
+                    <h3>No hay cortes</h3>
+                    <p>No se encontraron cortes con los filtros seleccionados.</p>
+                </div>
+            </div>
+
+            <!-- Reporte (Report) View -->
+            <div class="view-panel" id="view-reporte">
+                <div class="corte-report-controls">
+                    <div class="filter-group">
+                        <label class="form-label" style="margin-bottom: 0; font-size: 12px;">Fecha del reporte</label>
+                        <input type="date" class="filter-input" id="report-fecha" onchange="generateReport()">
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="printCorteReport()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                        Imprimir Reporte
+                    </button>
+                </div>
+
+                <div class="corte-report-container" id="corte-report-container">
+                    <!-- Report rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Prisma · Cortes de Caja
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-card">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Cargando...</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/components/corte-card.js"></script>
+    <script src="js/pages/cortes.js"></script>
+
+    <script>
+        // Password gate functions
+        function handleCortesPasswordKeypress(event) {
+            if (event.key === 'Enter') {
+                checkCortesPassword();
+            }
+        }
+
+        function checkCortesPassword() {
+            const input = document.getElementById('cortes-password-input');
+            const error = document.getElementById('cortes-password-error');
+
+            if (input.value === CONFIG.PAGOS_PASSWORD) {
+                error.classList.remove('visible');
+                input.classList.remove('error');
+
+                // Store cortes session
+                sessionStorage.setItem('prisma_cortes_session', JSON.stringify({
+                    authenticated: true,
+                    timestamp: Date.now()
+                }));
+
+                // Show main content
+                document.getElementById('password-gate').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+
+                // Initialize page
+                initCortesPage();
+            } else {
+                error.classList.add('visible');
+                input.classList.add('error', 'shake');
+                setTimeout(() => input.classList.remove('shake'), 300);
+                input.select();
+            }
+        }
+
+        // Check for existing session on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = sessionStorage.getItem('prisma_cortes_session');
+            if (session) {
+                try {
+                    const data = JSON.parse(session);
+                    if (data.authenticated) {
+                        document.getElementById('password-gate').style.display = 'none';
+                        document.getElementById('main-content').style.display = 'block';
+                        initCortesPage();
+                        return;
+                    }
+                } catch (e) {}
+            }
+
+            // Focus password input
+            document.getElementById('cortes-password-input').focus();
+        });
+    </script>
+</body>
+</html>

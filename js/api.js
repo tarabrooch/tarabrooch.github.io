@@ -404,6 +404,76 @@ const API = {
     },
 
     // ==========================================================================
+    // Cortes (Daily Sales Closings) API
+    // ==========================================================================
+
+    /**
+     * Create a new corte
+     * @param {Object} corteData - Corte data
+     * @returns {Promise<Object>} Created corte
+     */
+    async createCorte(corteData) {
+        return this.request('/cortes', {
+            method: 'POST',
+            body: JSON.stringify({
+                data: {
+                    ...corteData
+                },
+                created_by: Auth.getUserName()
+            })
+        });
+    },
+
+    /**
+     * Get all cortes with optional filters
+     * @param {Object} filters - Filter parameters
+     * @returns {Promise<Object>} Response with cortes data
+     */
+    async getCortes(filters = {}) {
+        const params = new URLSearchParams();
+
+        for (const [key, value] of Object.entries(filters)) {
+            if (value !== null && value !== undefined && value !== '') {
+                params.set(key, value);
+            }
+        }
+
+        const queryString = params.toString();
+        const endpoint = '/cortes' + (queryString ? '?' + queryString : '');
+
+        return this.request(endpoint, {
+            method: 'GET'
+        });
+    },
+
+    /**
+     * Update a corte
+     * @param {string} corteId - Corte ID
+     * @param {Object} updates - Fields to update
+     * @returns {Promise<Object>} Updated corte
+     */
+    async updateCorte(corteId, updates) {
+        return this.request(`/cortes/${corteId}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                data: updates,
+                user: Auth.getUserName()
+            })
+        });
+    },
+
+    /**
+     * Delete a corte
+     * @param {string} corteId - Corte ID
+     * @returns {Promise<Object>} Deletion result
+     */
+    async deleteCorte(corteId) {
+        return this.request(`/cortes/${corteId}`, {
+            method: 'DELETE'
+        });
+    },
+
+    // ==========================================================================
     // FX Rate API
     // ==========================================================================
 

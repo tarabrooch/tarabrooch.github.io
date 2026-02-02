@@ -288,6 +288,9 @@ const CONFIG = {
     // Cortes (Daily Sales Closings) Module
     // ==========================================================================
 
+    // Set to true to show the Cortes link on the landing page
+    CORTES_ENABLED: false,
+
     // Payment methods available for cortes
     CORTE_METODOS_PAGO: [
         { id: 'efectivo', name: 'Efectivo' },

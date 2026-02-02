@@ -3,6 +3,10 @@
  *
  * AWS Lambda function for managing Cortes (daily sales closings) in Notion.
  *
+ * Each corte is one record per date, with two independent breakdowns:
+ *   - ventas: JSON object of vendedora amounts (stored as rich_text)
+ *   - Payment methods: individual number properties
+ *
  * ENDPOINTS:
  * - POST   /cortes          - Create new corte
  * - GET    /cortes          - Get all cortes (with optional filters)
@@ -22,7 +26,7 @@
  * NOTION DATABASE SCHEMA:
  * Create a database in Notion with these properties:
  * - fecha: Date
- * - vendedora: Select (Alba, Margarita, Rossy, Martha, Conchis)
+ * - ventas: Text (stores JSON of vendedora amounts, e.g. {"alba":5000,"rossy":3000})
  * - efectivo: Number
  * - tarjeta_credito: Number
  * - tarjeta_debito: Number
@@ -33,11 +37,9 @@
 
 import { Client } from '@notionhq/client';
 
-// Initialize Notion client
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const CORTES_DATABASE_ID = process.env.CORTES_DATABASE_ID;
 
-// CORS headers
 const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
@@ -45,83 +47,57 @@ const headers = {
     'Content-Type': 'application/json'
 };
 
-/**
- * Main handler
- */
 export const handler = async (event) => {
     console.log('Event:', JSON.stringify(event));
 
-    // Support both REST API (v1) and HTTP API (v2) event formats
     const method = event.httpMethod || event.requestContext?.http?.method;
 
-    // Handle CORS preflight
     if (method === 'OPTIONS') {
         return { statusCode: 200, headers, body: '' };
     }
 
     try {
-        // HTTP API v2 uses rawPath, REST API v1 uses path or resource
         const path = event.rawPath || event.path || event.resource || '';
         const pathParams = event.pathParameters || {};
 
-        // Route handling
-        if (path === '/cortes' && method === 'POST') {
-            return await createCorte(event);
-        }
-
-        if (path === '/cortes' && method === 'GET') {
-            return await getCortes(event);
-        }
+        if (path === '/cortes' && method === 'POST') return await createCorte(event);
+        if (path === '/cortes' && method === 'GET') return await getCortes(event);
 
         if (path.match(/\/cortes\/[^/]+$/) && method === 'GET') {
             const id = pathParams.id || pathParams.proxy || path.split('/')[2];
             return await getCorte(id);
         }
-
         if (path.match(/\/cortes\/[^/]+$/) && method === 'PUT') {
             const id = pathParams.id || pathParams.proxy || path.split('/')[2];
             return await updateCorte(id, event);
         }
-
         if (path.match(/\/cortes\/[^/]+$/) && method === 'DELETE') {
             const id = pathParams.id || pathParams.proxy || path.split('/')[2];
             return await deleteCorte(id);
         }
 
-        return {
-            statusCode: 404,
-            headers,
-            body: JSON.stringify({ success: false, error: 'Not Found' })
-        };
-
+        return { statusCode: 404, headers, body: JSON.stringify({ success: false, error: 'Not Found' }) };
     } catch (error) {
         console.error('Handler error:', error);
-        return {
-            statusCode: 500,
-            headers,
-            body: JSON.stringify({ success: false, error: error.message })
-        };
+        return { statusCode: 500, headers, body: JSON.stringify({ success: false, error: error.message }) };
     }
 };
 
-/**
- * Create a new corte
- */
+// ==========================================================================
+// CRUD Operations
+// ==========================================================================
+
 async function createCorte(event) {
     const body = JSON.parse(event.body);
     const data = body.data;
     const createdBy = body.created_by || 'Sistema';
 
-    console.log('Creating corte:', data);
+    const ventasJson = JSON.stringify(data.ventas || {});
 
-    // Build Notion properties
     const properties = {
-        // Title (required for Notion pages)
-        'Name': {
-            title: [{ text: { content: `Corte ${data.vendedora} - ${data.fecha}` } }]
-        },
+        'Name': { title: [{ text: { content: `Corte ${data.fecha}` } }] },
         'fecha': { date: { start: data.fecha } },
-        'vendedora': { select: { name: data.vendedora } },
+        'ventas': { rich_text: [{ text: { content: ventasJson } }] },
         'efectivo': { number: data.efectivo || 0 },
         'tarjeta_credito': { number: data.tarjeta_credito || 0 },
         'tarjeta_debito': { number: data.tarjeta_debito || 0 },
@@ -130,77 +106,38 @@ async function createCorte(event) {
         'creado_por': { rich_text: [{ text: { content: createdBy } }] }
     };
 
-    // Create Notion page
     const response = await notion.pages.create({
         parent: { database_id: CORTES_DATABASE_ID },
-        properties: properties,
+        properties,
         children: [
             {
-                object: 'block',
-                type: 'heading_3',
-                heading_3: {
-                    rich_text: [{ text: { content: 'Historial de Cambios' } }]
-                }
+                object: 'block', type: 'heading_3',
+                heading_3: { rich_text: [{ text: { content: 'Historial de Cambios' } }] }
             },
             {
-                object: 'block',
-                type: 'paragraph',
-                paragraph: {
-                    rich_text: [{
-                        text: {
-                            content: `${formatTimestamp()} - Corte creado por ${createdBy}`
-                        }
-                    }]
-                }
+                object: 'block', type: 'paragraph',
+                paragraph: { rich_text: [{ text: { content: `${formatTimestamp()} - Corte creado por ${createdBy}` } }] }
             }
         ]
     });
 
-    console.log('Created corte:', response.id);
-
     return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-            success: true,
-            data: { id: response.id, ...data }
-        })
+        statusCode: 200, headers,
+        body: JSON.stringify({ success: true, data: { id: response.id, ...data } })
     };
 }
 
-/**
- * Get all cortes (with optional filters)
- */
 async function getCortes(event) {
     const queryParams = event.queryStringParameters || {};
-
-    console.log('Getting cortes with filters:', queryParams);
-
-    // Build filter
     const filters = [];
 
-    if (queryParams.vendedora) {
-        filters.push({
-            property: 'vendedora',
-            select: { equals: queryParams.vendedora }
-        });
-    }
-
     if (queryParams.fecha_desde) {
-        filters.push({
-            property: 'fecha',
-            date: { on_or_after: queryParams.fecha_desde }
-        });
+        filters.push({ property: 'fecha', date: { on_or_after: queryParams.fecha_desde } });
     }
-
     if (queryParams.fecha_hasta) {
-        filters.push({
-            property: 'fecha',
-            date: { on_or_before: queryParams.fecha_hasta }
-        });
+        filters.push({ property: 'fecha', date: { on_or_before: queryParams.fecha_hasta } });
     }
 
-    // Query Notion
     const queryOptions = {
         database_id: CORTES_DATABASE_ID,
         sorts: [{ property: 'fecha', direction: 'descending' }]
@@ -211,135 +148,67 @@ async function getCortes(event) {
     }
 
     const response = await notion.databases.query(queryOptions);
-
-    // Transform results
     const cortes = response.results.map(page => transformCorte(page));
 
-    return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({ success: true, data: cortes })
-    };
+    return { statusCode: 200, headers, body: JSON.stringify({ success: true, data: cortes }) };
 }
 
-/**
- * Get single corte by ID
- */
 async function getCorte(corteId) {
-    console.log('Getting corte:', corteId);
-
     const response = await notion.pages.retrieve({ page_id: corteId });
-    const corte = transformCorte(response);
-
-    return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({ success: true, data: corte })
-    };
+    return { statusCode: 200, headers, body: JSON.stringify({ success: true, data: transformCorte(response) }) };
 }
 
-/**
- * Update a corte
- */
 async function updateCorte(corteId, event) {
     const body = JSON.parse(event.body);
     const data = body.data;
     const userName = body.user || 'Sistema';
 
-    console.log('Updating corte:', corteId, data);
-
-    // Build properties to update
     const properties = {};
 
-    if (data.fecha) {
-        properties['fecha'] = { date: { start: data.fecha } };
-    }
+    if (data.fecha) properties['fecha'] = { date: { start: data.fecha } };
+    if (data.ventas !== undefined) properties['ventas'] = { rich_text: [{ text: { content: JSON.stringify(data.ventas) } }] };
+    if (data.efectivo !== undefined) properties['efectivo'] = { number: data.efectivo };
+    if (data.tarjeta_credito !== undefined) properties['tarjeta_credito'] = { number: data.tarjeta_credito };
+    if (data.tarjeta_debito !== undefined) properties['tarjeta_debito'] = { number: data.tarjeta_debito };
+    if (data.transferencia !== undefined) properties['transferencia'] = { number: data.transferencia };
+    if (data.num_notas !== undefined) properties['num_notas'] = { number: data.num_notas };
 
-    if (data.vendedora) {
-        properties['vendedora'] = { select: { name: data.vendedora } };
-    }
+    const response = await notion.pages.update({ page_id: corteId, properties });
 
-    if (data.efectivo !== undefined) {
-        properties['efectivo'] = { number: data.efectivo };
-    }
-
-    if (data.tarjeta_credito !== undefined) {
-        properties['tarjeta_credito'] = { number: data.tarjeta_credito };
-    }
-
-    if (data.tarjeta_debito !== undefined) {
-        properties['tarjeta_debito'] = { number: data.tarjeta_debito };
-    }
-
-    if (data.transferencia !== undefined) {
-        properties['transferencia'] = { number: data.transferencia };
-    }
-
-    if (data.num_notas !== undefined) {
-        properties['num_notas'] = { number: data.num_notas };
-    }
-
-    // Update Notion page
-    const response = await notion.pages.update({
-        page_id: corteId,
-        properties: properties
-    });
-
-    // Log the update
-    const changeLogEntry = `${formatTimestamp()} - Corte actualizado por ${userName}`;
     await notion.blocks.children.append({
         block_id: corteId,
-        children: [
-            {
-                object: 'block',
-                type: 'paragraph',
-                paragraph: {
-                    rich_text: [{ text: { content: changeLogEntry } }]
-                }
-            }
-        ]
+        children: [{
+            object: 'block', type: 'paragraph',
+            paragraph: { rich_text: [{ text: { content: `${formatTimestamp()} - Corte actualizado por ${userName}` } }] }
+        }]
     });
 
-    console.log('Updated corte:', corteId);
-
-    return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-            success: true,
-            data: transformCorte(response)
-        })
-    };
+    return { statusCode: 200, headers, body: JSON.stringify({ success: true, data: transformCorte(response) }) };
 }
 
-/**
- * Delete (archive) a corte
- */
 async function deleteCorte(corteId) {
-    console.log('Archiving corte:', corteId);
-
-    await notion.pages.update({
-        page_id: corteId,
-        archived: true
-    });
-
-    return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({ success: true })
-    };
+    await notion.pages.update({ page_id: corteId, archived: true });
+    return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
 }
 
-/**
- * Transform Notion page to corte object
- */
+// ==========================================================================
+// Transform & Helpers
+// ==========================================================================
+
 function transformCorte(page) {
     const props = page.properties;
+
+    // Parse ventas JSON from rich_text
+    let ventas = {};
+    const ventasRaw = getRichText(props.ventas);
+    if (ventasRaw) {
+        try { ventas = JSON.parse(ventasRaw); } catch (e) { /* ignore parse errors */ }
+    }
 
     return {
         id: page.id,
         fecha: getDate(props.fecha),
-        vendedora: getSelect(props.vendedora),
+        ventas,
         efectivo: getNumber(props.efectivo) || 0,
         tarjeta_credito: getNumber(props.tarjeta_credito) || 0,
         tarjeta_debito: getNumber(props.tarjeta_debito) || 0,
@@ -351,26 +220,13 @@ function transformCorte(page) {
     };
 }
 
-// ==========================================================================
-// Helper functions
-// ==========================================================================
-
-function getNumber(prop) {
-    return prop?.number ?? null;
-}
-
-function getSelect(prop) {
-    return prop?.select?.name ?? null;
-}
-
+function getNumber(prop) { return prop?.number ?? null; }
+function getSelect(prop) { return prop?.select?.name ?? null; }
 function getRichText(prop) {
     if (!prop?.rich_text || prop.rich_text.length === 0) return null;
     return prop.rich_text.map(t => t.plain_text).join('');
 }
-
-function getDate(prop) {
-    return prop?.date?.start ?? null;
-}
+function getDate(prop) { return prop?.date?.start ?? null; }
 
 function formatTimestamp() {
     const now = new Date();
@@ -378,10 +234,8 @@ function formatTimestamp() {
     const minutes = now.getMinutes().toString().padStart(2, '0');
     const ampm = hours >= 12 ? 'pm' : 'am';
     const hour12 = hours % 12 || 12;
-
     const year = now.getFullYear();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const day = now.getDate().toString().padStart(2, '0');
-
     return `${hour12}:${minutes} ${ampm}, ${year}-${month}-${day}`;
 }

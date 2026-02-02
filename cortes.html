@@ -36,7 +36,7 @@
         <div class="page-header">
             <div class="page-header-left">
                 <h1>Cortes de Caja</h1>
-                <p class="corte-subtitle" id="corte-subtitle">Registro de ventas diarias</p>
+                <p class="corte-subtitle">Registro de ventas diarias</p>
             </div>
             <div class="page-header-right">
                 <button class="btn btn-secondary btn-sm" id="print-report-btn" onclick="printCorteReport()" style="display: none;">
@@ -77,40 +77,63 @@
                         </div>
                     </div>
 
-                    <!-- Vendedora selector -->
-                    <div class="corte-vendedora-selector">
-                        <label class="form-label">Vendedora</label>
-                        <div class="user-chips" id="corte-vendedora-chips">
-                            <!-- Rendered by JS -->
+                    <!-- Two-column split: Vendedoras | Payment methods -->
+                    <div class="corte-split-form">
+                        <!-- Left: By vendedora -->
+                        <div class="corte-split-section">
+                            <div class="corte-split-header">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                <span>Por Vendedora</span>
+                            </div>
+                            <div class="corte-input-list" id="corte-vendedora-inputs">
+                                <!-- Rendered by JS -->
+                            </div>
+                            <div class="corte-section-total">
+                                <span>Subtotal Vendedoras</span>
+                                <span id="corte-vendedora-total">$0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Right: By payment method -->
+                        <div class="corte-split-section">
+                            <div class="corte-split-header">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+                                <span>Por Método de Pago</span>
+                            </div>
+                            <div class="corte-input-list" id="corte-metodo-inputs">
+                                <!-- Rendered by JS -->
+                            </div>
+                            <div class="corte-section-total">
+                                <span>Subtotal Métodos</span>
+                                <span id="corte-metodo-total">$0.00</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Payment method inputs -->
-                    <div class="corte-payment-form" id="corte-payment-form" style="display: none;">
-                        <div class="corte-payment-grid" id="corte-payment-grid">
-                            <!-- Rendered by JS -->
+                    <!-- Validation indicator -->
+                    <div class="corte-validation" id="corte-validation">
+                        <div class="corte-validation-icon" id="corte-validation-icon">
+                            <!-- Set by JS -->
                         </div>
+                        <span id="corte-validation-text">Ingresa montos para comenzar</span>
+                    </div>
 
-                        <div class="form-group">
+                    <!-- Notas + Save -->
+                    <div class="corte-bottom-row">
+                        <div class="form-group" style="margin-bottom: 0; flex: 1; max-width: 200px;">
                             <label class="form-label">Número de Notas</label>
-                            <input type="number" class="form-input" id="corte-num-notas" min="0" step="1" placeholder="0" oninput="updateCorteTotal()">
+                            <input type="number" class="form-input" id="corte-num-notas" min="0" step="1" placeholder="0">
                         </div>
-
-                        <div class="corte-total-row">
-                            <span class="corte-total-label">Total</span>
-                            <span class="corte-total-value" id="corte-total">$0.00</span>
-                        </div>
-
-                        <button class="btn btn-primary" id="corte-save-btn" onclick="saveCorte()">
+                        <button class="btn btn-primary" id="corte-save-btn" onclick="saveCorte()" disabled>
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                             Guardar Corte
                         </button>
                     </div>
 
-                    <!-- Existing cortes for selected date -->
+                    <!-- Existing corte for selected date -->
                     <div class="corte-existing-section" id="corte-existing-section" style="display: none;">
                         <div class="divider"></div>
-                        <h3 class="corte-existing-title">Cortes registrados hoy</h3>
+                        <h3 class="corte-existing-title">Corte registrado para esta fecha</h3>
                         <div id="corte-existing-list">
                             <!-- Rendered by JS -->
                         </div>
@@ -121,12 +144,6 @@
             <!-- Historial (History) View -->
             <div class="view-panel" id="view-historial">
                 <div class="corte-history-filters">
-                    <div class="filter-group">
-                        <select class="filter-select" id="filter-vendedora" onchange="applyCorteHistoryFilters()">
-                            <option value="">Todas las vendedoras</option>
-                            <!-- Options rendered by JS -->
-                        </select>
-                    </div>
                     <div class="filter-group">
                         <label class="form-label" style="margin-bottom: 0; font-size: 12px;">Desde</label>
                         <input type="date" class="filter-input" id="filter-fecha-desde" onchange="applyCorteHistoryFilters()">

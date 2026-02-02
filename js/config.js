@@ -282,7 +282,19 @@ const CONFIG = {
     ],
 
     // Default FX rate (USD to MXN)
-    DEFAULT_FX_RATE: 19.10
+    DEFAULT_FX_RATE: 19.10,
+
+    // ==========================================================================
+    // Cortes (Daily Sales Closings) Module
+    // ==========================================================================
+
+    // Payment methods available for cortes
+    CORTE_METODOS_PAGO: [
+        { id: 'efectivo', name: 'Efectivo' },
+        { id: 'tarjeta_credito', name: 'Tarjeta de Crédito' },
+        { id: 'tarjeta_debito', name: 'Tarjeta de Débito' },
+        { id: 'transferencia', name: 'Transferencia' }
+    ]
 };
 
 // Freeze config to prevent accidental modifications
@@ -294,3 +306,4 @@ Object.freeze(CONFIG.GEMAS_ORIGEN);
 Object.freeze(CONFIG.PAGO_ESTADOS);
 Object.freeze(CONFIG.PAGO_CATEGORIES);
 Object.freeze(CONFIG.PAGO_CURRENCIES);
+Object.freeze(CONFIG.CORTE_METODOS_PAGO);

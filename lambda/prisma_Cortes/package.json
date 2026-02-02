@@ -1,0 +1,10 @@
+{
+  "name": "prisma-cortes",
+  "version": "1.0.0",
+  "description": "Lambda to manage daily sales closings (cortes) in Notion",
+  "main": "index.mjs",
+  "type": "module",
+  "dependencies": {
+    "@notionhq/client": "^2.2.15"
+  }
+}

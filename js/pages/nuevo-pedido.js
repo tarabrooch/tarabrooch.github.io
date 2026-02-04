@@ -75,9 +75,15 @@ window.printOrder = function() {
             size: auto;
             margin: 5mm;
         }
+        * {
+            -webkit-font-smoothing: none;
+            -moz-osx-font-smoothing: unset;
+            text-rendering: geometricPrecision;
+        }
         body {
             font-family: 'Courier New', Courier, monospace;
-            font-size: 12px;
+            font-size: 14px;
+            font-weight: normal;
             line-height: 1.4;
             max-width: 300px;
             margin: 0 auto;
@@ -89,7 +95,9 @@ window.printOrder = function() {
         }
         .title {
             font-size: 16px;
-            font-weight: bold;
+            font-weight: normal;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         .divider {
             border-top: 1px dashed #000;
@@ -104,12 +112,13 @@ window.printOrder = function() {
             font-weight: normal;
         }
         .value {
-            font-weight: bold;
+            font-weight: normal;
             text-align: right;
         }
         .total-row {
             font-size: 14px;
-            font-weight: bold;
+            font-weight: normal;
+            text-transform: uppercase;
             margin-top: 8px;
         }
         .description {
@@ -119,10 +128,16 @@ window.printOrder = function() {
         .footer {
             text-align: center;
             margin-top: 15px;
-            font-size: 10px;
+            font-size: 12px;
         }
         @media print {
             body { margin: 0; padding: 5px; }
+            * {
+                -webkit-font-smoothing: none;
+                -moz-osx-font-smoothing: unset;
+                text-rendering: geometricPrecision;
+                font-smooth: never;
+            }
         }
     </style>
 </head>
@@ -158,7 +173,7 @@ window.printOrder = function() {
     </div>
 
     <div class="description">
-        <strong>Descripcion:</strong><br>
+        DESCRIPCION:<br>
         ${order.descripcion}
     </div>
 

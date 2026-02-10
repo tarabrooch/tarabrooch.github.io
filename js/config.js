@@ -289,7 +289,7 @@ const CONFIG = {
     // ==========================================================================
 
     // Set to true to show the Cortes link on the landing page
-    CORTES_ENABLED: false,
+    CORTES_ENABLED: true,
 
     // Payment methods available for cortes
     CORTE_METODOS_PAGO: [

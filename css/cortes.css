@@ -598,7 +598,7 @@
    ========================================================================== */
 
 @media (max-width: 768px) {
-    .container-wide { padding: 16px; }
+    .container-wide { padding: 16px 16px 80px 16px; }
     .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
     .toolbar { flex-direction: column; }
     .view-toggles { width: 100%; justify-content: center; flex-wrap: wrap; }
@@ -607,6 +607,8 @@
     .corte-date-input { max-width: 100%; }
 
     .corte-split-form { grid-template-columns: 1fr; }
+
+    .corte-form-card { margin-bottom: 24px; }
 
     .corte-bottom-row { flex-direction: column; align-items: stretch; }
     .corte-bottom-row .form-group { max-width: 100% !important; }

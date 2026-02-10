@@ -298,13 +298,15 @@
 
 .corte-bottom-row {
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
     gap: 16px;
     margin-bottom: 0;
 }
 
 .corte-bottom-row .btn {
-    flex-shrink: 0;
+    width: 100%;
+    max-width: 300px;
+    align-self: flex-end;
 }
 
 /* Existing cortes section */
@@ -598,7 +600,7 @@
    ========================================================================== */
 
 @media (max-width: 768px) {
-    .container-wide { padding: 16px 16px 80px 16px; }
+    .container-wide { padding: 16px 16px 40px 16px; }
     .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
     .toolbar { flex-direction: column; }
     .view-toggles { width: 100%; justify-content: center; flex-wrap: wrap; }
@@ -610,7 +612,7 @@
 
     .corte-form-card { margin-bottom: 24px; }
 
-    .corte-bottom-row { flex-direction: column; align-items: stretch; }
+    .corte-bottom-row .btn { max-width: 100%; }
     .corte-bottom-row .form-group { max-width: 100% !important; }
 
     .cortes-history-grid { grid-template-columns: 1fr; }

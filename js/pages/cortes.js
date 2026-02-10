@@ -151,10 +151,10 @@ function updateValidation() {
     wrapEl.classList.remove('valid', 'invalid', 'empty');
 
     if (bothEmpty) {
-        wrapEl.classList.add('empty');
-        iconEl.innerHTML = '';
-        textEl.textContent = 'Ingresa montos para comenzar';
-        saveBtn.disabled = true;
+        wrapEl.classList.add('valid');
+        iconEl.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+        textEl.textContent = 'Sin ventas para este día ($0.00)';
+        saveBtn.disabled = false;
     } else if (match) {
         wrapEl.classList.add('valid');
         iconEl.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
@@ -259,25 +259,17 @@ async function saveCorte() {
 
     // Gather vendedora amounts
     const ventas = {};
-    let hasVenta = false;
     CONFIG.VENDEDORAS.forEach(v => {
         const val = parseFloat(document.getElementById(`corte-v-${v.id}`)?.value) || 0;
-        if (val > 0) { ventas[v.id] = val; hasVenta = true; }
+        if (val > 0) { ventas[v.id] = val; }
     });
 
     // Gather payment method amounts
     const corteData = { fecha, ventas, num_notas: parseInt(document.getElementById('corte-num-notas').value) || 0 };
-    let hasMetodo = false;
     CONFIG.CORTE_METODOS_PAGO.forEach(m => {
         const val = parseFloat(document.getElementById(`corte-m-${m.id}`)?.value) || 0;
         corteData[m.id] = val;
-        if (val > 0) hasMetodo = true;
     });
-
-    if (!hasVenta && !hasMetodo) {
-        Utils.showToast('Ingresa al menos un monto', 'warning');
-        return;
-    }
 
     // Validate totals match
     const vTotal = getVendedoraTotal();

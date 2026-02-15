@@ -340,13 +340,28 @@ window.handleSaveOrder = async function() {
             // Auto-deduct gold if conditions are met
             if (shouldDeductGold) {
                 try {
+                    // Use different movement type for fabricacion orders
+                    const isFabricacionOrder = currentOrder.is_fabricacion === true;
+                    const movementType = isFabricacionOrder ? 'Salida Fabricacion' : 'Salida Pedido';
+
+                    // For fabricacion, extract last 5 chars of page ID for numero_orden
+                    let movNumeroOrden = formData.numero_orden || '';
+                    if (isFabricacionOrder) {
+                        const cleanId = orderId.replace(/-/g, '');
+                        movNumeroOrden = cleanId.slice(-5);
+                    }
+
+                    const movDescripcion = isFabricacionOrder
+                        ? `Fabricacion - ${formData.tipo_pedido || ''}`
+                        : `${formData.tipo_pedido || 'Pedido'} - ${formData.nombre_cliente || 'Sin nombre'}`;
+
                     await API.createGoldMovement({
                         joyero: formData.joyero,
-                        tipo_movimiento: 'Salida Pedido',
+                        tipo_movimiento: movementType,
                         gramos: formData.oro_gramos,
                         order_id: orderId,
-                        numero_orden: formData.numero_orden || '',
-                        descripcion: `${formData.tipo_pedido || 'Pedido'} - ${formData.nombre_cliente || 'Sin nombre'}`
+                        numero_orden: movNumeroOrden,
+                        descripcion: movDescripcion
                     });
                     Utils.showToast(`Pedido actualizado. ${formData.oro_gramos}g descontados de ${formData.joyero}`, 'success');
                 } catch (goldError) {

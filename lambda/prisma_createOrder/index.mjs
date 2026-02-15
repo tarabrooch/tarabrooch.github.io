@@ -59,6 +59,22 @@ export const handler = async (event) => {
             properties
         });
 
+        // For fabricacion orders, update the title with the last 5 chars of the page ID
+        let fabricaTitle = null;
+        if (data.is_fabricacion) {
+            const pageIdClean = newPage.id.replace(/-/g, '');
+            const last5 = pageIdClean.slice(-5);
+            fabricaTitle = `[Fabrica] ${last5}`;
+            await notion.pages.update({
+                page_id: newPage.id,
+                properties: {
+                    numero_orden: {
+                        title: [{ text: { content: fabricaTitle } }]
+                    }
+                }
+            });
+        }
+
         return {
             statusCode: 201,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -66,7 +82,8 @@ export const handler = async (event) => {
                 success: true,
                 data: {
                     id: newPage.id,
-                    created_time: newPage.created_time
+                    created_time: newPage.created_time,
+                    numero_orden: fabricaTitle || data.numero_orden
                 }
             })
         };
@@ -118,7 +135,7 @@ function buildProperties(data) {
     });
 
     // Checkbox properties
-    const checkboxFields = ['oro_con_joyero', 'gemas_listas', 'requiere_certificado'];
+    const checkboxFields = ['oro_con_joyero', 'gemas_listas', 'requiere_certificado', 'is_fabricacion'];
     checkboxFields.forEach(field => {
         if (data[field] !== undefined) {
             properties[field] = {

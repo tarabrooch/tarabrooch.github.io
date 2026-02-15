@@ -240,7 +240,7 @@ function renderMovementsTable() {
                     <div class="movement-time">${timeStr}</div>
                 </td>
                 <td><strong>${m.joyero}</strong></td>
-                <td><span class="movement-type ${tipoClass}">${m.tipo_movimiento}${(m.tipo_movimiento === 'Salida Pedido' && m.numero_orden) ? ` (${m.numero_orden})` : ''}</span></td>
+                <td><span class="movement-type ${tipoClass}">${m.tipo_movimiento}${((m.tipo_movimiento === 'Salida Pedido' || m.tipo_movimiento === 'Salida Fabricacion') && m.numero_orden) ? ` (${m.numero_orden})` : ''}</span></td>
                 <td class="text-right"><span class="movement-gramos ${tipoClass}">${gramosPrefix}${m.gramos.toFixed(1)}g</span></td>
                 <td class="movement-desc">${m.descripcion || '-'}</td>
                 <td>${m.numero_orden ? `<a href="pedidos.html" class="order-link">${m.numero_orden}</a>` : '-'}</td>

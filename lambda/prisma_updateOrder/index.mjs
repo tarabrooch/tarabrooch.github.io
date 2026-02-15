@@ -158,7 +158,7 @@ function buildProperties(data) {
     });
 
     // Checkbox properties
-    const checkboxFields = ['oro_con_joyero', 'gemas_listas', 'requiere_certificado'];
+    const checkboxFields = ['oro_con_joyero', 'gemas_listas', 'requiere_certificado', 'is_fabricacion'];
     checkboxFields.forEach(field => {
         if (data[field] !== undefined) {
             properties[field] = {

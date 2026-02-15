@@ -16,7 +16,22 @@
 
         <div class="header">
             <h1>Nuevo Pedido</h1>
-            <p>Crear una nueva orden de cliente</p>
+            <p id="header-subtitle">Crear una nueva orden de cliente</p>
+        </div>
+
+        <!-- Order Type Toggle -->
+        <div class="card fade-in" style="margin-bottom: 16px;">
+            <div class="order-type-toggle">
+                <button type="button" class="order-type-btn active" id="btn-type-orden" onclick="setOrderType('orden')">
+                    Orden
+                </button>
+                <button type="button" class="order-type-btn" id="btn-type-fabricacion" onclick="setOrderType('fabricacion')">
+                    Fabricaci&oacute;n
+                </button>
+            </div>
+            <p class="form-hint text-center" id="fabricacion-hint" style="display: none; margin-top: 8px; color: var(--purple);">
+                Orden de fabricaci&oacute;n interna - sin cliente
+            </p>
         </div>
 
         <!-- Form -->
@@ -24,7 +39,7 @@
             <form id="nuevo-pedido-form">
 
                 <!-- Order Info -->
-                <div class="card fade-in">
+                <div class="card fade-in" id="card-order-info">
                     <h3 class="card-title">Información de la Orden</h3>
 
                     <div class="form-group">
@@ -44,7 +59,7 @@
                 </div>
 
                 <!-- Customer Info -->
-                <div class="card fade-in">
+                <div class="card fade-in" id="card-customer-info">
                     <h3 class="card-title">Información del Cliente</h3>
 
                     <div class="form-group">
@@ -85,7 +100,7 @@
                 </div>
 
                 <!-- Pricing -->
-                <div class="card fade-in">
+                <div class="card fade-in" id="card-pricing">
                     <h3 class="card-title">Importe</h3>
 
                     <div class="form-group">
@@ -299,6 +314,46 @@
             background: var(--success);
             color: white;
             border-color: var(--success);
+        }
+
+        /* Order Type Toggle */
+        .order-type-toggle {
+            display: flex;
+            gap: 0;
+            background: var(--bg-tertiary);
+            padding: 4px;
+            border-radius: var(--radius);
+        }
+
+        .order-type-btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: 2px solid transparent;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .order-type-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .order-type-btn.active {
+            background: var(--bg-primary);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .order-type-btn.active-fabricacion {
+            background: #fff0f3;
+            color: #be185d;
+            box-shadow: var(--shadow-sm);
         }
     </style>
 </body>

@@ -209,6 +209,7 @@ function transformPage(page) {
         notas: getRichText(props.notas),
         vendedora: getSelect(props.vendedora),
         requiere_certificado: getCheckbox(props.requiere_certificado),
+        is_fabricacion: getCheckbox(props.is_fabricacion),
         created_time: page.created_time,
         last_edited_time: page.last_edited_time
     };

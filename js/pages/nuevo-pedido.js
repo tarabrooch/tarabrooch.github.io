@@ -10,6 +10,46 @@ let lastCreatedOrder = null;
 // Garantía state
 let isGarantia = false;
 
+// Fabricación state
+let isFabricacion = false;
+
+/**
+ * Set order type (orden vs fabricacion)
+ */
+window.setOrderType = function(type) {
+    isFabricacion = (type === 'fabricacion');
+
+    const btnOrden = document.getElementById('btn-type-orden');
+    const btnFabricacion = document.getElementById('btn-type-fabricacion');
+    const hint = document.getElementById('fabricacion-hint');
+    const subtitle = document.getElementById('header-subtitle');
+
+    // Toggle active state
+    btnOrden.classList.toggle('active', !isFabricacion);
+    btnFabricacion.classList.toggle('active', isFabricacion);
+    btnFabricacion.classList.toggle('active-fabricacion', isFabricacion);
+    btnOrden.classList.toggle('active', !isFabricacion);
+
+    // Show/hide hint
+    hint.style.display = isFabricacion ? 'block' : 'none';
+    subtitle.textContent = isFabricacion ? 'Orden de fabricacion interna' : 'Crear una nueva orden de cliente';
+
+    // Show/hide cards
+    const cardOrderInfo = document.getElementById('card-order-info');
+    const cardCustomerInfo = document.getElementById('card-customer-info');
+    const cardPricing = document.getElementById('card-pricing');
+
+    if (isFabricacion) {
+        cardOrderInfo.classList.add('hidden');
+        cardCustomerInfo.classList.add('hidden');
+        cardPricing.classList.add('hidden');
+    } else {
+        cardOrderInfo.classList.remove('hidden');
+        cardCustomerInfo.classList.remove('hidden');
+        cardPricing.classList.remove('hidden');
+    }
+};
+
 /**
  * Toggle garantía mode - sets total and anticipo to 0
  */
@@ -355,22 +395,34 @@ window.printOrder = function() {
     function validateForm() {
         const errors = [];
 
-        // Required fields (skip importe/anticipo for garantía orders)
-        const requiredFields = [
-            { id: 'numero_orden', label: 'Número de orden' },
-            { id: 'vendedora', label: 'Vendedora' },
-            { id: 'nombre_cliente', label: 'Nombre del cliente' },
-            { id: 'tipo_pedido', label: 'Tipo de pedido' },
-            { id: 'descripcion', label: 'Descripción' },
-            { id: 'fecha_entrega_cliente', label: 'Fecha de entrega al cliente' }
-        ];
+        // Required fields depend on order type
+        let requiredFields;
 
-        // Only require importe/anticipo if not garantía
-        if (!isGarantia) {
-            requiredFields.push(
-                { id: 'importe_total', label: 'Importe total' },
-                { id: 'anticipo', label: 'Anticipo' }
-            );
+        if (isFabricacion) {
+            // Fabricacion: only detalles, delivery date
+            requiredFields = [
+                { id: 'tipo_pedido', label: 'Tipo de pedido' },
+                { id: 'descripcion', label: 'Descripción' },
+                { id: 'fecha_entrega_cliente', label: 'Fecha de entrega' }
+            ];
+        } else {
+            // Regular order
+            requiredFields = [
+                { id: 'numero_orden', label: 'Número de orden' },
+                { id: 'vendedora', label: 'Vendedora' },
+                { id: 'nombre_cliente', label: 'Nombre del cliente' },
+                { id: 'tipo_pedido', label: 'Tipo de pedido' },
+                { id: 'descripcion', label: 'Descripción' },
+                { id: 'fecha_entrega_cliente', label: 'Fecha de entrega al cliente' }
+            ];
+
+            // Only require importe/anticipo if not garantía
+            if (!isGarantia) {
+                requiredFields.push(
+                    { id: 'importe_total', label: 'Importe total' },
+                    { id: 'anticipo', label: 'Anticipo' }
+                );
+            }
         }
 
         requiredFields.forEach(field => {
@@ -422,14 +474,8 @@ window.printOrder = function() {
         }
 
         const formData = {
-            numero_orden: document.getElementById('numero_orden').value.trim(),
-            vendedora: document.getElementById('vendedora').value,
-            nombre_cliente: document.getElementById('nombre_cliente').value.trim(),
-            telefono_cliente: document.getElementById('telefono_cliente').value.trim() || null,
             tipo_pedido: document.getElementById('tipo_pedido').value,
             descripcion: descripcion,
-            importe_total: isGarantia ? 0 : parseFloat(document.getElementById('importe_total').value),
-            anticipo: isGarantia ? 0 : parseFloat(document.getElementById('anticipo').value),
             fecha_entrega_cliente: document.getElementById('fecha_entrega_cliente').value,
             fecha_entrega_tienda: document.getElementById('fecha_entrega_tienda').value || null,
             fecha_fabricacion: document.getElementById('fecha_fabricacion').value || null,
@@ -438,8 +484,27 @@ window.printOrder = function() {
             gemas_requeridas: document.getElementById('gemas_requeridas').value.trim() || null,
             gemas_origen: document.getElementById('gemas_origen').value || null,
             notas: document.getElementById('notas').value.trim() || null,
-            requiere_certificado: document.getElementById('requiere_certificado').checked
+            is_fabricacion: isFabricacion
         };
+
+        if (isFabricacion) {
+            // Fabricacion: no customer, no pricing, placeholder title (will be set by Lambda)
+            formData.numero_orden = 'FABRICA-TEMP';
+            formData.nombre_cliente = null;
+            formData.telefono_cliente = null;
+            formData.vendedora = null;
+            formData.importe_total = 0;
+            formData.anticipo = 0;
+            formData.requiere_certificado = false;
+        } else {
+            formData.numero_orden = document.getElementById('numero_orden').value.trim();
+            formData.vendedora = document.getElementById('vendedora').value;
+            formData.nombre_cliente = document.getElementById('nombre_cliente').value.trim();
+            formData.telefono_cliente = document.getElementById('telefono_cliente').value.trim() || null;
+            formData.importe_total = isGarantia ? 0 : parseFloat(document.getElementById('importe_total').value);
+            formData.anticipo = isGarantia ? 0 : parseFloat(document.getElementById('anticipo').value);
+            formData.requiere_certificado = document.getElementById('requiere_certificado').checked;
+        }
 
         // If fecha_entrega_tienda not set, calculate it
         if (!formData.fecha_entrega_tienda && formData.fecha_entrega_cliente) {
@@ -483,40 +548,71 @@ window.printOrder = function() {
         // Show success container
         document.getElementById('success-container').classList.remove('hidden');
 
-        // Render order summary
-        const summaryContainer = document.getElementById('order-summary');
-        summaryContainer.innerHTML = `
-            <div class="order-summary-row">
-                <span class="order-summary-label">Orden</span>
-                <span class="order-summary-value">[${formData.numero_orden}] ${formData.nombre_cliente}</span>
-            </div>
-            <div class="order-summary-row">
-                <span class="order-summary-label">Tipo</span>
-                <span class="order-summary-value">${Utils.getTipoPedidoName(formData.tipo_pedido)}</span>
-            </div>
-            <div class="order-summary-row">
-                <span class="order-summary-label">Importe Total</span>
-                <span class="order-summary-value">${Utils.formatCurrency(formData.importe_total)}</span>
-            </div>
-            <div class="order-summary-row">
-                <span class="order-summary-label">Anticipo</span>
-                <span class="order-summary-value">${Utils.formatCurrency(formData.anticipo)}</span>
-            </div>
-            <div class="order-summary-row">
-                <span class="order-summary-label">Saldo Pendiente</span>
-                <span class="order-summary-value" style="color: var(--primary); font-weight: 600;">
-                    ${Utils.formatCurrency(formData.importe_total - formData.anticipo)}
-                </span>
-            </div>
-            <div class="order-summary-row">
-                <span class="order-summary-label">Entrega Cliente</span>
-                <span class="order-summary-value">${Utils.formatDate(formData.fecha_entrega_cliente)}</span>
-            </div>
-            <div class="order-summary-row" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
-                <span class="order-summary-label">Notion ID</span>
-                <span class="order-summary-value" style="font-family: monospace; font-size: 12px; color: #6b7280;">${result.data?.id || 'N/A'}</span>
-            </div>
-        `;
+        // Update success message for fabricacion
+        if (formData.is_fabricacion) {
+            const displayTitle = result.data?.numero_orden || 'Fabricacion';
+            document.querySelector('#success-container .card-title').textContent = 'Orden de Fabricacion Creada';
+
+            const summaryContainer = document.getElementById('order-summary');
+            summaryContainer.innerHTML = `
+                <div class="order-summary-row">
+                    <span class="order-summary-label">Orden</span>
+                    <span class="order-summary-value" style="color: #be185d; font-weight: 600;">${displayTitle}</span>
+                </div>
+                <div class="order-summary-row">
+                    <span class="order-summary-label">Tipo</span>
+                    <span class="order-summary-value">${Utils.getTipoPedidoName(formData.tipo_pedido)}</span>
+                </div>
+                <div class="order-summary-row">
+                    <span class="order-summary-label">Fecha Entrega</span>
+                    <span class="order-summary-value">${Utils.formatDate(formData.fecha_entrega_cliente)}</span>
+                </div>
+                ${formData.joyero ? `
+                <div class="order-summary-row">
+                    <span class="order-summary-label">Joyero</span>
+                    <span class="order-summary-value">${formData.joyero}</span>
+                </div>` : ''}
+                <div class="order-summary-row" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                    <span class="order-summary-label">Notion ID</span>
+                    <span class="order-summary-value" style="font-family: monospace; font-size: 12px; color: #6b7280;">${result.data?.id || 'N/A'}</span>
+                </div>
+            `;
+        } else {
+            // Render regular order summary
+            const summaryContainer = document.getElementById('order-summary');
+            summaryContainer.innerHTML = `
+                <div class="order-summary-row">
+                    <span class="order-summary-label">Orden</span>
+                    <span class="order-summary-value">[${formData.numero_orden}] ${formData.nombre_cliente}</span>
+                </div>
+                <div class="order-summary-row">
+                    <span class="order-summary-label">Tipo</span>
+                    <span class="order-summary-value">${Utils.getTipoPedidoName(formData.tipo_pedido)}</span>
+                </div>
+                <div class="order-summary-row">
+                    <span class="order-summary-label">Importe Total</span>
+                    <span class="order-summary-value">${Utils.formatCurrency(formData.importe_total)}</span>
+                </div>
+                <div class="order-summary-row">
+                    <span class="order-summary-label">Anticipo</span>
+                    <span class="order-summary-value">${Utils.formatCurrency(formData.anticipo)}</span>
+                </div>
+                <div class="order-summary-row">
+                    <span class="order-summary-label">Saldo Pendiente</span>
+                    <span class="order-summary-value" style="color: var(--primary); font-weight: 600;">
+                        ${Utils.formatCurrency(formData.importe_total - formData.anticipo)}
+                    </span>
+                </div>
+                <div class="order-summary-row">
+                    <span class="order-summary-label">Entrega Cliente</span>
+                    <span class="order-summary-value">${Utils.formatDate(formData.fecha_entrega_cliente)}</span>
+                </div>
+                <div class="order-summary-row" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                    <span class="order-summary-label">Notion ID</span>
+                    <span class="order-summary-value" style="font-family: monospace; font-size: 12px; color: #6b7280;">${result.data?.id || 'N/A'}</span>
+                </div>
+            `;
+        }
     }
 
 })();

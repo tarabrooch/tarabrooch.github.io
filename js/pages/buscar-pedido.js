@@ -120,7 +120,7 @@ function renderResultCard(order) {
         <div class="result-card" onclick="openOrderDetail('${order.id}')">
             <div class="result-card-header">
                 <div>
-                    <div class="result-card-cliente">[${escapeHtml(order.numero_orden || 'Sin número')}] ${escapeHtml(order.nombre_cliente || 'Sin nombre')}</div>
+                    <div class="result-card-cliente">${order.is_fabricacion ? escapeHtml(order.numero_orden || 'Fabricación') : `[${escapeHtml(order.numero_orden || 'Sin número')}] ${escapeHtml(order.nombre_cliente || 'Sin nombre')}`}</div>
                     <div class="result-card-tipo">${Utils.getTipoPedidoName(order.tipo_pedido) || order.tipo_pedido || 'Sin tipo'}</div>
                 </div>
                 <span class="order-status ${statusClass}">${statusDisplay}</span>

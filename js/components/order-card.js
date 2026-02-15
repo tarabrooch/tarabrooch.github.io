@@ -72,6 +72,7 @@ const OrderCard = {
         const dateUrgent = this.isDateUrgent(order.fecha_entrega_cliente);
         const dateOverdue = this.isDateOverdue(order.fecha_entrega_cliente);
         const dateClass = dateOverdue ? 'date-overdue' : (dateUrgent ? 'date-urgent' : '');
+        const fabricacionClass = order.is_fabricacion ? ' fabricacion' : '';
 
         // Gold status
         const hasGold = order.oro_gramos && order.oro_gramos > 0;
@@ -98,7 +99,7 @@ const OrderCard = {
                     </div>` : '';
 
         return `
-            <div class="order-card" data-order-id="${order.id}" onclick="openEditModal('${order.id}')">
+            <div class="order-card${fabricacionClass}" data-order-id="${order.id}" onclick="openEditModal('${order.id}')">
                 <div class="order-card-header">
                     <div>
                         <div class="order-card-cliente">${this.escapeHtml(this.getDisplayTitle(order))}</div>
@@ -107,10 +108,10 @@ const OrderCard = {
                     <span class="order-status ${statusClass}">${order.estado || 'Sin estado'}</span>
                 </div>
                 <div class="order-card-body">
-                    <div class="order-card-row">
+                    ${!order.is_fabricacion ? `<div class="order-card-row">
                         <span class="order-card-label">Importe Total</span>
                         <span class="order-card-value">${Utils.formatCurrency(order.importe_total)}</span>
-                    </div>
+                    </div>` : ''}
                     <div class="order-card-row">
                         <span class="order-card-label">Oro</span>
                         <span class="order-card-value ${goldStatus}">${goldText}</span>
@@ -148,13 +149,14 @@ const OrderCard = {
         const dateUrgent = this.isDateUrgent(order.fecha_entrega_cliente);
         const dateOverdue = this.isDateOverdue(order.fecha_entrega_cliente);
         const dateClass = dateOverdue ? 'date-overdue' : (dateUrgent ? 'date-urgent' : '');
+        const fabricacionClass = order.is_fabricacion ? ' fabricacion' : '';
 
         return `
-            <div class="kanban-card" data-order-id="${order.id}" onclick="openEditModal('${order.id}')">
+            <div class="kanban-card${fabricacionClass}" data-order-id="${order.id}" onclick="openEditModal('${order.id}')">
                 <div class="kanban-card-cliente">${this.escapeHtml(this.getDisplayTitle(order))}</div>
                 <div class="kanban-card-tipo">${Utils.getTipoPedidoName(order.tipo_pedido) || order.tipo_pedido || '-'}</div>
                 <div class="kanban-card-footer">
-                    <span class="kanban-card-total">${Utils.formatCurrency(order.importe_total)}</span>
+                    <span class="kanban-card-total">${order.is_fabricacion ? 'Fabricacion' : Utils.formatCurrency(order.importe_total)}</span>
                     <span class="kanban-card-date ${dateClass}">${Utils.formatDate(order.fecha_entrega_cliente)}</span>
                 </div>
                 ${order.requiere_certificado ? '<span class="certificate-badge certificate-badge-sm">Certificado</span>' : ''}
@@ -170,9 +172,10 @@ const OrderCard = {
     renderCalendar(order) {
         const statusClass = this.getStatusClass(order.estado);
         const displayTitle = this.getDisplayTitle(order);
+        const fabricacionClass = order.is_fabricacion ? ' fabricacion' : '';
 
         return `
-            <div class="calendar-order ${statusClass}" data-order-id="${order.id}" onclick="openEditModal('${order.id}')" title="${this.escapeHtml(displayTitle)} - ${Utils.getTipoPedidoName(order.tipo_pedido)}">
+            <div class="calendar-order ${statusClass}${fabricacionClass}" data-order-id="${order.id}" onclick="openEditModal('${order.id}')" title="${this.escapeHtml(displayTitle)} - ${Utils.getTipoPedidoName(order.tipo_pedido)}">
                 ${this.escapeHtml(Utils.truncate(displayTitle, 18))}
             </div>
         `;

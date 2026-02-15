@@ -196,6 +196,16 @@
     transform: translateY(-2px);
 }
 
+/* Fabricacion order cards - light pink background */
+.order-card.fabricacion {
+    background: #fff0f3;
+    border-color: #fecdd3;
+}
+
+.order-card.fabricacion:hover {
+    border-color: #fb7185;
+}
+
 .order-card-header {
     display: flex;
     justify-content: space-between;
@@ -454,6 +464,16 @@
     border-color: var(--primary);
 }
 
+/* Fabricacion kanban cards */
+.kanban-card.fabricacion {
+    background: #fff0f3;
+    border-color: #fecdd3;
+}
+
+.kanban-card.fabricacion:hover {
+    border-color: #fb7185;
+}
+
 .kanban-card-cliente {
     font-size: 14px;
     font-weight: 600;
@@ -658,6 +678,13 @@
 .calendar-order.cancelado {
     background: #f1f5f9;
     color: #64748b;
+}
+
+/* Fabricacion calendar orders */
+.calendar-order.fabricacion {
+    background: #fff0f3 !important;
+    color: #be185d !important;
+    border-left: 2px solid #fb7185;
 }
 
 .calendar-more {

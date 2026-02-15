@@ -39,14 +39,21 @@ window.setOrderType = function(type) {
     const cardCustomerInfo = document.getElementById('card-customer-info');
     const cardPricing = document.getElementById('card-pricing');
 
+    // Fields that are required only for regular orders
+    const conditionalRequired = ['numero_orden', 'vendedora', 'nombre_cliente', 'importe_total', 'anticipo'];
+
     if (isFabricacion) {
         cardOrderInfo.classList.add('hidden');
         cardCustomerInfo.classList.add('hidden');
         cardPricing.classList.add('hidden');
+        // Remove required from hidden fields so browser validation doesn't block submit
+        conditionalRequired.forEach(id => document.getElementById(id).removeAttribute('required'));
     } else {
         cardOrderInfo.classList.remove('hidden');
         cardCustomerInfo.classList.remove('hidden');
         cardPricing.classList.remove('hidden');
+        // Restore required on visible fields
+        conditionalRequired.forEach(id => document.getElementById(id).setAttribute('required', ''));
     }
 };
 

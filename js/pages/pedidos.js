@@ -306,12 +306,14 @@ window.handleSaveOrder = async function() {
 
     // Check if we need to auto-deduct gold (status changed to "En Producción")
     // Note: Providers (proveedores) do not track gold movements
+    // Note: Fabricacion orders skip oro_con_joyero requirement (gold is internal)
     const statusChangedToProduccion = currentOrder.estado !== 'En Producción' && formData.estado === 'En Producción';
     const isProvider = CONFIG.isProveedor(formData.joyero);
+    const isFabricacionOrder = currentOrder.is_fabricacion === true;
     const shouldDeductGold = statusChangedToProduccion &&
         formData.oro_gramos > 0 &&
         formData.joyero &&
-        formData.oro_con_joyero === true &&
+        (isFabricacionOrder || formData.oro_con_joyero === true) &&
         !isProvider;
 
     // Debug logging
@@ -322,6 +324,7 @@ window.handleSaveOrder = async function() {
     console.log('formData.oro_gramos:', formData.oro_gramos);
     console.log('formData.joyero:', formData.joyero);
     console.log('formData.oro_con_joyero:', formData.oro_con_joyero);
+    console.log('isFabricacionOrder:', isFabricacionOrder);
     console.log('isProvider:', isProvider);
     console.log('shouldDeductGold:', shouldDeductGold);
 

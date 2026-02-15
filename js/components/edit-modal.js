@@ -68,8 +68,8 @@ const EditModal = {
 
             <!-- Order Header (read-only summary) -->
             <div style="background: #f3f4f6; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px;">
-                <div style="font-weight: 600; font-size: 16px;">[${this.escapeHtml(order.numero_orden || 'Sin número')}] ${this.escapeHtml(order.nombre_cliente || 'Sin nombre')}</div>
-                <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">${Utils.getTipoPedidoName(order.tipo_pedido) || order.tipo_pedido || 'Sin tipo'} · ${Utils.formatCurrency(order.importe_total)} · Saldo: ${Utils.formatCurrency(saldo)}</div>
+                <div style="font-weight: 600; font-size: 16px;">${order.is_fabricacion ? this.escapeHtml(order.numero_orden || 'Fabricación') : `[${this.escapeHtml(order.numero_orden || 'Sin número')}] ${this.escapeHtml(order.nombre_cliente || 'Sin nombre')}`}</div>
+                <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">${Utils.getTipoPedidoName(order.tipo_pedido) || order.tipo_pedido || 'Sin tipo'}${order.is_fabricacion ? '' : ` · ${Utils.formatCurrency(order.importe_total)} · Saldo: ${Utils.formatCurrency(saldo)}`}</div>
             </div>
 
             <!-- ========== COMMON FIELDS ========== -->

@@ -60,6 +60,10 @@ const OrderCard = {
      */
     getDisplayTitle(order) {
         const orderNum = order.numero_orden || '';
+        // Fabricacion orders already have formatted title like "[Fabrica] xxxxx"
+        if (order.is_fabricacion) {
+            return orderNum || 'Fabricación';
+        }
         const clientName = order.nombre_cliente || 'Sin nombre';
         if (orderNum) {
             return `[${orderNum}] ${clientName}`;
